@@ -1,5 +1,7 @@
 # Spring 
 
+<img src="img/spring-framework-introduce.png" alt="spring-framework-introduce" style="zoom: 67%;" />
+
 ## IOC 
 
 > **IOC(*Inversion of Control*：控制反转)**，是一种设计思想。对象在被创建的时候，由一个调控系统内所有对象的外界实体将其所依赖的对象的引用传递给它。
@@ -536,9 +538,9 @@ public class Bar {
 
 ### BeanFactory
 
-BeanFactory，以 Factory 结尾，表示它是一个工厂(接口)， 它负责生产和管理 Bean 的一个工厂。在 Spring 中，BeanFactory 是工厂的顶层接口，也是 IOC 容器的核心接口，因此 BeanFactory 中定义了管理Bean的通用方法，如 `getBean` 和 `containsBean` 等，它的职责包括：实例化、定位、配置应用程序中的对象及建立这些对象间的依赖。BeanFactory 只是个接口，并不是 IOC容器的具体实现，所以Spring 容器给出了很多种实现，如 `DefaultListableBeanFactory`、`XmlBeanFactory`、`ApplicationContext` 等，其中 `XmlBeanFactory`就是常用的一个，该实现将以 XML 方式描述组成应用的对象及对象间的依赖关系。
+BeanFactory，以 Factory 结尾，表示它是一个工厂(接口)， 它负责生产和管理 Bean 的一个工厂。在 Spring 中，BeanFactory 是工厂的顶层接口，也是 IOC 容器的核心接口，因此 BeanFactory 中定义了管理Bean的通用方法，如 `getBean` 和 `containsBean` 等，它的职责包括：实例化、定位、配置应用程序中的对象及建立这些对象间的依赖。BeanFactory 只是个接口，并不是 IOC容器的具体实现，所以Spring 容器给出了很多种实现，如 `DefaultListableBeanFactory`、`XMLBeanFactory`、`ApplicationContext` 等，其中 `XMLBeanFactory`就是常用的一个，该实现将以 XML 方式描述组成应用的对象及对象间的依赖关系。
 
-##### BeanFactory 源码
+#### BeanFactory 源码
 
 ```java
 public interface BeanFactory {
@@ -567,7 +569,7 @@ public interface BeanFactory {
 }
 ```
 
-##### BeanFactory 与ApplicationContext的关系
+#### BeanFactory 与ApplicationContext的关系
 
 日常工作中我们常常将 BeanFactory 称为容器，而将 ApplicationContext 称为上下文。BeanFactory 提供了配置框架和基本功能，ApplicationContext 增加了更多针对企业的功能。ApplicationContext 是 BeanFactory 的一个完整的超集，二者是一个包含与被包含的关系。
 
@@ -646,17 +648,6 @@ public <T> T getBean(String name, Class<T> requiredType) throws BeansException {
 ```
 
 这里实际上并没有对此方法有详细的实现，而是通过 `getBeanFactory()` 获取自身内部的容器对象，然后交由其实现，这里使用了组合模式。
-
-
-
-```java
-//此时该类只能在dev环境下才可以生效，该类的所有方法也只能在该环境下生效
-@Configuration
-@Profile("dev")
-public class Test{
-  ...
-}
-```
 
 ### IOC 加载过程
 
@@ -793,7 +784,7 @@ public class AllAwareInterface  implements BeanNameAware, BeanClassLoaderAware,
     }
     @Override
     public void setEnvironment(Environment environment) {
-        // 在工程启动时可以获得application.properties 、xml、yml 的配置文件配置的属性值
+        // 在工程启动时可以获得application.properties 、XML、yml 的配置文件配置的属性值
         System.out.println("4 我是 EnvironmentAware 的 setEnvironment 方法");
     }
     @Override
@@ -841,10 +832,10 @@ Spring ResourceLoader 提供了一个统一的 `getResource()` 方法来通过�
 
 |    前缀    |              示例              |              说明              |
 | :--------: | :----------------------------: | :----------------------------: |
-| classpath: | classpath:com/myapp/config.xml |          从类路径加载          |
-|   file:    |    file:///data/config.xml     |     从文件系统作为URL加载      |
-|   http:    |  https://myserver/config.xml   |           从URL加载            |
-|   (none)   |        /data/config.xml        | 取决于底层的ApplicationContext |
+| classpath: | classpath:com/myapp/config.XML |          从类路径加载          |
+|   file:    |    file:///data/config.XML     |     从文件系统作为URL加载      |
+|   http:    |  https://myserver/config.XML   |           从URL加载            |
+|   (none)   |        /data/config.XML        | 取决于底层的ApplicationContext |
 
 ###### ApplicationEventPublisherAware.setApplicationEventPublisher()
 
@@ -1225,12 +1216,12 @@ public class MyBeanPostProcessor implements BeanPostProcessor {
 }
 ```
 
-在 resources 目录下新建 `Bean-Lifecycle.xml`：
+在 resources 目录下新建 `Bean-Lifecycle.XML`：
 
 ```xml
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
+<beans XMLns="http://www.springframework.org/schema/beans"
+       XMLns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       XMLns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
 http://www.springframework.org/schema/beans/spring-beans-2.5.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
@@ -1256,10 +1247,10 @@ public class SpringBeanLifecycleApplication {
 
     public static void main(String[] args) throws InterruptedException {
         // 为面试而准备的Bean生命周期加载过程
-        ApplicationContext context = new ClassPathXmlApplicationContext("Bean-Lifecycle.xml");
+        ApplicationContext context = new ClassPathXMLApplicationContext("Bean-Lifecycle.XML");
         Book book = (Book)context.getBean("book");
         System.out.println("Book name = " + book.getBookName());
-        ((ClassPathXmlApplicationContext) context).destroy();
+        ((ClassPathXMLApplicationContext) context).destroy();
     }
 }
 ```
@@ -1284,9 +1275,893 @@ Book.myPreDestory invoke
 ---------------destroy-----------------
 ```
 
+### Spring IOC的体系结构设计
+
+![IOC容器整体功能](img/IOC容器整体功能.png)
+
+作为一个IOC容器，主体上应该包含以下几个部分：
+
+- 加载 Bean 的配置(比如XML配置)。比如不同类型资源的加载，解析成生成统一 Bean 的定义；
+- 根据 Bean 的定义加载生成 Bean 的实例，并放置在 Bean 容器中。比如 Bean 的依赖注入，Bean 的嵌套，Bean 存放(缓存)等；
+- 除了基础 Bean 外，还有常规针对企业级业务的特别 Bean。比如国际化 Message，事件 Event 等生成特殊的类结构去支撑；
+- 对容器中的 Bean 提供统一的管理和调用。比如用工厂模式管理，提供方法根据名字/类的类型等从容器中获取 Bean。
+
+#### BeanFactory和BeanRegistry：IOC容器功能规范和Bean的注册
+
+> Spring Bean 的创建是典型的工厂模式，这一系列的 Bean 工厂，也即 IOC 容器为开发者管理对象间的依赖关系提供了很多便利和基础服务，在 Spring 中有许多的 IOC 容器的实现供用户选择和使用，这是 IOC 容器的基础；在顶层的结构设计主要围绕着BeanFactory 和 xxxRegistry 进行：
+>
+> - **BeanFactory： 工厂模式定义了IOC容器的基本功能规范**
+> - **BeanRegistry： 向IOC容器手工注册 BeanDefinition 对象的方法**
+
+<img src="img/bf和br的关系.png"  />
+
+##### BeanFactory 定义了 IOC 容器基本功能规范？
+
+**BeanFactory 作为最顶层的一个接口类，它定义了 IOC 容器的基本功能规范**，BeanFactory 有三个子类：`ListableBeanFactory`、`HierarchicalBeanFactory` 和 `AutowireCapableBeanFactory`。看下 BeanFactory 接口源码：
+
+```java
+public interface BeanFactory {    
+      
+    // 用于取消引用实例并将其与FactoryBean创建的Bean区分开来。例如，如果命名的Bean是FactoryBean，则获取将返回Factory，而不是Factory返回的实例。
+    String FACTORY_BEAN_PREFIX = "&"; 
+        
+    //根据Bean的名字和Class类型等来得到Bean实例    
+    Object getBean(String name) throws BeansException;    
+    Object getBean(String name, Class requiredType) throws BeansException;    
+    Object getBean(String name, Object... args) throws BeansException;
+    <T> T getBean(Class<T> requiredType) throws BeansException;
+    <T> T getBean(Class<T> requiredType, Object... args) throws BeansException;
+
+    //返回指定Bean的Provider
+    <T> ObjectProvider<T> getBeanProvider(Class<T> requiredType);
+    <T> ObjectProvider<T> getBeanProvider(ResolvableType requiredType);
+
+    //检查工厂中是否包含给定name的Bean，或者外部注册的Bean
+    boolean containsBean(String name);
+
+    //检查所给定name的Bean是否为单例/原型
+    boolean isSingleton(String name) throws NoSuchBeanDefinitionException;
+    boolean isPrototype(String name) throws NoSuchBeanDefinitionException;
+
+    //判断所给name的类型与type是否匹配
+    boolean isTypeMatch(String name, ResolvableType typeToMatch) throws NoSuchBeanDefinitionException;
+    boolean isTypeMatch(String name, Class<?> typeToMatch) throws NoSuchBeanDefinitionException;
+
+    //获取给定name的Bean的类型
+    @Nullable
+    Class<?> getType(String name) throws NoSuchBeanDefinitionException;
+
+    //返回给定name的Bean的别名
+    String[] getAliases(String name);
+     
+}
+```
+
+##### BeanFactory为何要定义这么多层次的接口？定义了哪些接口？
+
+主要是为了**区分在 Spring 内部在操作过程中对象的传递和转化过程中，对对象的数据访问所做的限制**。
+
+有哪些接口呢？
+
+- **ListableBeanFactory**：该接口定义了访问容器中 Bean 基本信息的若干方法，如查看 Bean 的个数、获取某一类型 Bean 的配置名、查看容器中是否包括某一 Bean 等方法；
+- **HierarchicalBeanFactory**：父子级联 IOC 容器的接口，子容器可以通过接口方法访问父容器； 通过 HierarchicalBeanFactory 接口， Spring 的 IOC 容器可以建立父子层级关联的容器体系，子容器可以访问父容器中的 Bean，但父容器不能访问子容器的 Bean。Spring 使用父子容器实现了很多功能，比如在 Spring MVC 中，展现层 Bean 位于一个子容器中，而业务层和持久层的 Bean 位于父容器中。这样，展现层 Bean 就可以引用业务层和持久层的 Bean，而业务层和持久层的 Bean 则看不到展现层的 Bean。
+- **ConfigurableBeanFactory**：是一个重要的接口，增强了 IOC 容器的可定制性，它定义了设置类装载器、属性编辑器、容器初始化后置处理器等方法；
+- **ConfigurableListableBeanFactory**: `ListableBeanFactory` 和 `ConfigurableBeanFactory` 的融合；
+- **AutowireCapableBeanFactory**：定义了将容器中的 Bean 按某种规则（如按名字匹配、按类型匹配等）进行自动装配的方法。
+
+##### 如何将Bean注册到BeanFactory中？BeanRegistry
+
+Spring 配置文件中每一个`<bean>`节点元素在 Spring 容器里都通过一个 BeanDefinition 对象表示，它描述了 Bean 的配置信息。而 BeanDefinitionRegistry 接口提供了向容器手工注册 BeanDefinition 对象的方法。
+
+#### BeanDefinition：各种Bean对象及其相互的关系
+
+> Bean 对象存在依赖嵌套等关系，所以设计者设计了 BeanDefinition，它用来对 Bean 对象及关系定义；在理解时只需要抓住如下三个要点：
+>
+> - BeanDefinition 定义了各种 Bean 对象及其相互的关系；
+> - BeanDefinitionReader 是 BeanDefinition 的解析器；
+> - BeanDefinitionHolder 是 BeanDefination 的包装类，用来存储 BeanDefinition，name 以及 aliases等。
+
+##### BeanDefinition
+
+SpringIOC 容器管理了定义的各种 Bean 对象及其相互的关系，Bean 对象在 Spring 实现中是以 BeanDefinition 来描述的，其继承体系如下：
+
+<img src="img/BeanDefinition继承体系.png" alt="BeanDefinition继承体系" style="zoom: 40%;" />
+
+##### BeanDefinitionReader
+
+Bean 的解析过程非常复杂，功能被分的很细，因为这里需要被扩展的地方很多，必须保证有足够的灵活性，以应对可能的变化。Bean 的解析主要就是对 Spring 配置文件的解析。这个解析过程主要通过下图中的类完成：
+
+<img src="img/Bean的解析过程相应的类.png" alt="Bean的解析过程相应的类" style="zoom:50%;" />
+
+##### BeanDefinitionHolder
+
+`BeanDefinitionHolder` 是 BeanDefination 的包装类，用来存储 BeanDefinition，name 以及 aliases 等。
+
+<img src="img/BeanDefinitionHolder.png" alt="BeanDefinitionHolder" style="zoom: 50%;" />
+
+#### ApplicationContext：IOC接口设计和实现
+
+> IOC 容器的接口类是 ApplicationContext，很显然它必然继承 BeanFactory 对 Bean规范(最基本的 IOC 容器的实现)进行定义。而 ApplicationContext 表示的是应用的上下文，除了对 Bean 的管理外，还至少应该包含了：
+>
+> - **访问资源**： 对不同方式的 Bean 配置(即资源)进行加载。(实现 `ResourcePatternResolver` 接口)
+> - **国际化**: 支持信息源，可以实现国际化。(实现 `MessageSource` 接口)
+> - **应用事件**: 支持应用事件。(实现 `ApplicationEventPublisher` 接口)
+
+##### ApplicationContext接口的设计
+
+以下是 ApplicationContext 整体结构：
+
+![ApplicationContext整体结构](img/ApplicationContext整体结构.png)
+
+**HierarchicalBeanFactory 和 ListableBeanFactory**： ApplicationContext 继承了 `HierarchicalBeanFactory` 和 `ListableBeanFactory` 接口，在此基础上，还通过多个其他的接口扩展了 BeanFactory 的功能；
+
+**ApplicationEventPublisher**：让容器拥有发布应用上下文事件的功能，包括容器启动事件、关闭事件等。实现了 `ApplicationListener` 事件监听接口的 Bean 可以接收到容器事件 ， 并对事件进行响应处理 。 在 ApplicationContext 抽象实现类 `AbstractApplicationContext` 中，可以发现存在一个 `ApplicationEventMulticaster`，它负责保存所有监听器，以便在容器产生上下文事件时通知这些事件监听者；
+
+**MessageSource**：为应用提供 i18n 国际化消息访问的功能；
+
+**ResourcePatternResolver** ： 所有 ApplicationContext 实现类都实现了类似于 `PathMatchingResourcePatternResolver` 的功能，可以通过带前缀的 Ant 风格的资源文件路径装载 Spring 的配置文件。
+
+**LifeCycle**：该接口是 Spring 2.0 加入的，该接口提供了 `start()` 和 `stop()` 两个方法，主要用于控制异步处理过程。在具体使用时，该接口同时被 ApplicationContext 实现及具体 Bean 实现， ApplicationContext 会将 start/stop 的信息传递给容器中所有实现了该接口的 Bean，以达到管理和控制 JMX、任务调度等目的。
+
+**ConfigurableApplicationContext**： 扩展于 ApplicationContext，它新增加了两个主要的方法： `refresh()` 和 `close()`，让 ApplicationContext 具有启动、刷新和关闭应用上下文的能力。在应用上下文关闭的情况下调用 `refresh()` 即可启动应用上下文，在已经启动的状态下，调用 `refresh()` 则清除缓存并重新装载配置信息，而调用 `close()` 则可关闭应用上下文。这些接口方法为容器的控制管理带来了便利，但作为开发者，并不需要过多关心这些方法。
+
+##### ApplicationContext接口的实现
+
+在考虑 ApplicationContext 接口的实现时，关键的点在于，不同 Bean 的配置方式(比如 XML,groovy,annotation 等)有着不同的资源加载方式，这便衍生除了众多 ApplicationContext 的实现类。
+
+![ApplicationContext的实现类](img/ApplicationContext的实现类.png)
+
+**从类结构设计上看， 围绕着是否需要Refresh容器衍生出两个抽象类：**
+
+- **GenericApplicationContext**： 是初始化的时候就创建容器，往后的每次 refresh 都不会更改；
+- **AbstractRefreshableApplicationContext**： `AbstractRefreshableApplicationContext` 及子类的每次 refresh 都是先清除已有(如果不存在就创建)的容器，然后再重新创建；`AbstractRefreshableApplicationContext `及子类无法做到 `GenericApplicationContext`**混合搭配从不同源头获取 Bean 的定义信息**。
+
+**从加载的源来看(比如 XML,groovy,annotation 等)， 衍生出众多类型的 ApplicationContext, 典型比如：**
+
+- **FileSystemXMLApplicationContext**： 从文件系统下的一个或多个 XML 配置文件中加载上下文定义，也就是说系统盘符中加载 XML 配置文件；
+- **ClassPathXMLApplicationContext**： 从类路径下的一个或多个 XML 配置文件中加载上下文定义，适用于 XML 配置的方式；
+- **AnnotationConfigApplicationContext**： 从一个或多个基于 Java 的配置类中加载上下文定义，适用于 Java 注解的方式。
+
+**设计者在设计时AnnotationConfigApplicationContext为什么是继承GenericApplicationContext**？ 
+
+因为基于注解的配置，是不太会被运行时修改的，这意味着不需要进行动态 Bean 配置和刷新容器，所以只需要`GenericApplicationContext`。而基于 XML 这种配置文件，这种文件是容易修改的，需要动态性刷新 Bean 的支持，所以 XML 相关的配置必然继承 `AbstractRefreshableApplicationContext`； 且存在多种 XML 的加载方式(位置不同的设计)，所以必然会设计出`AbstractXMLApplicationContext`，其中包含对 XML 配置解析成 BeanDefination 的过程。
+
+从上图可以发现 `AnnotationWebConfigApplicationContext` 却是继承了 `AbstractRefreshableApplicationContext` 而不是`GenericApplicationContext`， **为什么 AnnotationWebConfigApplicationContext 继承自 AbstractRefreshableApplicationContext呢** ？ 因为用户可以通过 `ApplicationContextInitializer` 来设置 `contextInitializerClasses(context-param / init-param)`， 在这种情况下用户倾向于刷新 Bean 的，所以设计者选择让 `AnnotationWebConfigApplicationContext` 继承了 `AbstractRefreshableApplicationContext`。
+
+结合之前的设计要点和设计结构来看：
+
+![IOC容器整体功能2](img/IOC容器整体功能2.png)
+
+### IOC初始化流程
+
+#### **如何将Bean从XML配置中解析后放到IOC容器中的？**
+
+>  本章的目标就是分析 Spring 如何实现将资源配置(以 XML 配置为例)通过加载，解析，生成 BeanDefination 并注册到 IOC 容器中的。
+
+##### 初始化的入口
+
+对于 XML 配置的 Spring 应用，在 `main()` 方法中实例化 `ClasspathXmlApplicationContext` 即可创建一个IOC容器。可以从这个构造方法开始，探究一下 IOC 容器的初始化过程。
+
+```java
+ // create and configure Beans
+ApplicationContext context = new ClassPathXmlApplicationContext("aspects.xml", "daos.xml", "services.xml");
+```
+
+```java
+public ClassPathXmlApplicationContext(String... configLocations) throws BeansException {
+    this(configLocations, true, (ApplicationContext)null);
+}
+
+public ClassPathXmlApplicationContext(String[] configLocations, boolean refresh, @Nullable ApplicationContext parent) throws BeansException {
+    // 设置Bean资源加载器
+    super(parent);
+    // 设置配置路径
+    this.setConfigLocations(configLocations);
+    // 初始化容器
+    if (refresh) {
+        this.refresh();
+    }
+}
+```
+
+##### 设置资源解析器和环境
+
+调用父类容器 `AbstractApplicationContext` 的构造方法(`super(parent)` 方法)为容器设置好 Bean 资源加载器：
+
+```java
+public AbstractApplicationContext(@Nullable ApplicationContext parent) {
+    // 默认构造函数初始化容器id, name, 状态以及资源解析器
+    this();
+    // 将父容器的Environment合并到当前容器
+    this.setParent(parent);
+}
+```
+
+通过 `AbstractApplicationContext` 默认构造函数初始化容器 id，name，状态以及资源解析器：
+
+```java
+public AbstractApplicationContext() {
+    this.logger = LogFactory.getLog(this.getClass());
+    this.id = ObjectUtils.identityToString(this);
+    this.displayName = ObjectUtils.identityToString(this);
+    this.beanFactoryPostProcessors = new ArrayList();
+    this.active = new AtomicBoolean();
+    this.closed = new AtomicBoolean();
+    this.startupShutdownMonitor = new Object();
+    this.applicationStartup = ApplicationStartup.DEFAULT;
+    this.applicationListeners = new LinkedHashSet();
+    this.resourcePatternResolver = this.getResourcePatternResolver();
+}
+// Spring资源解析器
+protected ResourcePatternResolver getResourcePatternResolver() {
+    return new PathMatchingResourcePatternResolver(this);
+}
+```
+
+通过 `AbstractApplicationContext` 的 `setParent(parent)` 方法将父容器的 Environment 合并到当前容器：
+
+```java
+public void setParent(@Nullable ApplicationContext parent) {
+    this.parent = parent;
+    if (parent != null) {
+        Environment parentEnvironment = parent.getEnvironment();
+        if (parentEnvironment instanceof ConfigurableEnvironment) {
+            this.getEnvironment().merge((ConfigurableEnvironment)parentEnvironment);
+        }
+    }
+}
+```
+
+##### 设置配置路径
+
+在设置容器的资源加载器之后，接下来 `ClassPathXmlApplicationContext` 执行 `setConfigLocations` 方法通过调用其父类`AbstractRefreshableConfigApplicationContext` 的方法进行对 Bean 定义资源文件的定位。
+
+```java
+public void setConfigLocations(@Nullable String... locations) {
+    if (locations != null) {
+        Assert.noNullElements(locations, "Config locations must not be null");
+        this.configLocations = new String[locations.length];
+        for(int i = 0; i < locations.length; ++i) {
+            // 解析配置路径
+            this.configLocations[i] = this.resolvePath(locations[i]).trim();
+        }
+    } else {
+        this.configLocations = null;
+    }
+}
+protected String resolvePath(String path) {
+    // 从上一步Environment中解析
+    return this.getEnvironment().resolveRequiredPlaceholders(path);
+}
+```
+
+##### 初始化的主体流程
+
+Spring IOC 容器对 Bean 定义资源的载入是从 `refresh()` 函数开始的，`refresh()` 是一个模板方法，`refresh()` 方法的作用是：在创建IOC 容器前，如果已经有容器存在，则需要把已有的容器销毁和关闭，以保证在 `refresh` 之后使用的是新建立起来的 IOC 容器。`refresh` 的作用类似于对 IOC 容器的重启，在新建立好的容器中对容器进行初始化，对 Bean 定义资源进行载入。
+
+```java
+@Override
+public void refresh() throws BeansException, IllegalStateException {
+    synchronized (this.startupShutdownMonitor) {
+        StartupStep contextRefresh = this.applicationStartup.start("spring.context.refresh");
+
+        // Prepare this context for refreshing.
+        prepareRefresh();
+
+        // Tell the subclass to refresh the internal Bean factory.
+        ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
+
+        // Prepare the Bean factory for use in this context.
+        prepareBeanFactory(beanFactory);
+
+        try {
+            // Allows post-processing of the Bean factory in context subclasses.
+            postProcessBeanFactory(beanFactory);
+
+            StartupStep beanPostProcess = this.applicationStartup.start("spring.context.beans.post-process");
+            // Invoke factory processors registered as Beans in the context.
+            invokeBeanFactoryPostProcessors(beanFactory);
+
+            // Register bean processors that intercept Bean creation.
+            registerBeanPostProcessors(beanFactory);
+            beanPostProcess.end();
+
+            // Initialize message source for this context.
+            initMessageSource();
+
+            // Initialize event multicaster for this context.
+            initApplicationEventMulticaster();
+
+            // Initialize other special Beans in specific context subclasses.
+            onRefresh();
+
+            // Check for listener Beans and register them.
+            registerListeners();
+
+            // Instantiate all remaining (non-lazy-init) singletons.
+            finishBeanFactoryInitialization(beanFactory);
+
+            // Last step: publish corresponding event.
+            finishRefresh();
+        }
+
+        catch (BeansException ex) {
+            if (logger.isWarnEnabled()) {
+                logger.warn("Exception encountered during context initialization - " +
+                        "cancelling refresh attempt: " + ex);
+            }
+
+            // Destroy already created singletons to avoid dangling resources.
+            destroyBeans();
+
+            // Reset 'active' flag.
+            cancelRefresh(ex);
+
+            // Propagate exception to caller.
+            throw ex;
+        }
+
+        finally {
+            // Reset common introspection caches in Spring's core, since we
+            // might not ever need metadata for singleton beans anymore...
+            resetCommonCaches();
+            contextRefresh.end();
+        }
+    }
+}
+```
+
+这里的设计上是一个非常典型的资源类加载处理型的思路：
+
+* **模板方法设计模式**，模板方法中使用典型的**钩子方法**；
+
+* 将**具体的初始化加载方法**插入到钩子方法之间；
+
+* 将初始化的阶段封装，用来记录当前初始化到什么阶段；常见的设计是 `xxxPhase/xxxStage`；
+
+* 资源加载初始化有失败等处理，必然是 **try/catch/finally**...
+
+<img src="img/资源类加载处理思路图.png" alt="资源类加载处理思路图"  />
+
+##### 初始化BeanFactory之obtainFreshBeanFactory
+
+`AbstractApplicationContext` 的 `obtainFreshBeanFactory()` 方法调用子类容器的 `refreshBeanFactory()` 方法，启动容器载入 Bean 定义资源文件的过程，代码如下：
+
+```java
+protected ConfigurableListableBeanFactory obtainFreshBeanFactory() {
+    // 这里使用了委派设计模式，父类定义了抽象的refreshBeanFactory()方法，具体实现调用子类容器的refreshBeanFactory()方法
+    refreshBeanFactory();
+    return getBeanFactory();
+}
+```
+
+`AbstractApplicationContext` 类中只抽象定义了 `refreshBeanFactory()` 方法，容器真正调用的是其子类`AbstractRefreshableApplicationContext` 实现的 `refreshBeanFactory()` 方法。在创建 IOC 容器前，如果已经有容器存在，则需要把已有的容器销毁和关闭，以保证在 `refresh` 之后使用的是新建立起来的 IOC 容器。方法的源码如下：
+
+```java
+protected final void refreshBeanFactory() throws BeansException {
+    // 如果已经有容器存在，则需要把已有的容器销毁和关闭，以保证在refresh之后使用的是新建立起来的IOC容器
+    if (hasBeanFactory()) {
+        destroyBeans();
+        closeBeanFactory();
+    }
+    try {
+        // 创建DefaultListableBeanFactory，并调用loadBeanDefinitions(beanFactory)装载Bean定义
+        DefaultListableBeanFactory beanFactory = createBeanFactory();
+        beanFactory.setSerializationId(getId());
+        customizeBeanFactory(beanFactory); // 对IOC容器进行定制化，如设置启动参数，开启注解的自动装配等 
+        loadBeanDefinitions(beanFactory); // 调用载入Bean定义的方法，主要这里又使用了一个委派模式，在当前类中只定义了抽象的loadBeanDefinitions方法，具体的实现调用子类容器  
+        this.beanFactory = beanFactory;
+    }
+    catch (IOException ex) {
+        throw new ApplicationContextException("I/O error parsing bean definition source for " + getDisplayName(), ex);
+    }
+}
+```
+
+##### 初始化BeanFactory之loadBeanDefinitions
+
+`AbstractRefreshableApplicationContext` 中只定义了抽象的 `loadBeanDefinitions` 方法，容器真正调用的是其子类`AbstractXmlApplicationContext` 对该方法的实现，`AbstractXmlApplicationContext` 的主要源码如下：
+
+```java
+protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws BeansException, IOException {
+    // 创建XmlBeanDefinitionReader，即创建Bean读取器，并通过回调设置到容器中去，容器使用该读取器读取Bean定义资源  
+    XmlBeanDefinitionReader beanDefinitionReader = new XmlBeanDefinitionReader(beanFactory);
+
+    // 配置上下文的环境，资源加载器、解析器
+    beanDefinitionReader.setEnvironment(this.getEnvironment());
+    beanDefinitionReader.setResourceLoader(this);
+    beanDefinitionReader.setEntityResolver(new ResourceEntityResolver(this)); // 为Bean读取器设置SAX XML解析器
+
+    // 允许子类自行初始化（比如校验机制），并提供真正的加载方法
+    initBeanDefinitionReader(beanDefinitionReader); // 当Bean读取器读取Bean定义的XML资源文件时，启用XML的校验机制  
+    loadBeanDefinitions(beanDefinitionReader);
+}
+
+protected void loadBeanDefinitions(XmlBeanDefinitionReader reader) throws BeansException, IOException {
+    // 加载XML配置方式里的Bean定义的资源
+    Resource[] configResources = getConfigResources();
+    if (configResources != null) {
+        reader.loadBeanDefinitions(configResources);
+    }
+    // 加载构造函数里配置的Bean配置文件，即{"aspects.xml", "daos.xml", "services.xml"}
+    String[] configLocations = getConfigLocations();
+    if (configLocations != null) {
+        reader.loadBeanDefinitions(configLocations);
+    }
+}
+```
+
+XML Bean 读取器(`XmlBeanDefinitionReader`)调用其父类 `AbstractBeanDefinitionReader` 的 `reader.loadBeanDefinitions` 方法读取Bean 定义资源。
+
+由于使用 `ClassPathXmlApplicationContext` 作为例子分析，因此 `getConfigResources` 的返回值为 `null`，因此程序执行`reader.loadBeanDefinitions(configLocations)` 分支。
+
+##### AbstractBeanDefinitionReader读取Bean定义资源
+
+`AbstractBeanDefinitionReader` 的 `loadBeanDefinitions` 方法源码如下：
+
+```java
+@Override
+public int loadBeanDefinitions(String location) throws BeanDefinitionStoreException {
+    return loadBeanDefinitions(location, null);
+}
+
+public int loadBeanDefinitions(String location, @Nullable Set<Resource> actualResources) throws BeanDefinitionStoreException {
+    ResourceLoader resourceLoader = getResourceLoader();
+    if (resourceLoader == null) {
+        throw new BeanDefinitionStoreException(
+                "Cannot load bean definitions from location [" + location + "]: no ResourceLoader available");
+    }
+
+    // 模式匹配类型的解析器，这种方式是加载多个满足匹配条件的资源
+    if (resourceLoader instanceof ResourcePatternResolver) {
+        try {
+            // 获取到要加载的资源
+            Resource[] resources = ((ResourcePatternResolver) resourceLoader).getResources(location);
+            int count = loadBeanDefinitions(resources); // 委派调用其子类XmlBeanDefinitionReader的方法，实现加载功能  
+            if (actualResources != null) {
+                Collections.addAll(actualResources, resources);
+            }
+            if (logger.isTraceEnabled()) {
+                logger.trace("Loaded " + count + " bean definitions from location pattern [" + location + "]");
+            }
+            return count;
+        }
+        catch (IOException ex) {
+            throw new BeanDefinitionStoreException(
+                    "Could not resolve bean definition resource pattern [" + location + "]", ex);
+        }
+    }
+    else {
+        // 只能通过绝对路径URL加载单个资源.
+        Resource resource = resourceLoader.getResource(location);
+        int count = loadBeanDefinitions(resource);
+        if (actualResources != null) {
+            actualResources.add(resource);
+        }
+        if (logger.isTraceEnabled()) {
+            logger.trace("Loaded " + count + " bean definitions from location [" + location + "]");
+        }
+        return count;
+    }
+}
+```
+
+从对 `AbstractBeanDefinitionReader` 的 `loadBeanDefinitions` 方法源码分析可以看出该方法做了以下两件事：
+
+- 首先，调用资源加载器的获取资源方法 `resourceLoader.getResource(location)`，获取到要加载的资源；
+- 其次，真正执行加载功能是其子类 `XmlBeanDefinitionReader` 的 `loadBeanDefinitions` 方法。
+
+##### XmlBeanDefinitionReader加载Bean定义资源
+
+继续看子类 `XmlBeanDefinitionReader` 的 `loadBeanDefinitions(Resource …)` 方法看到代表 Bean 文件的资源定义以后的载入过程。
+
+```java
+/**
+    * 本质上是加载XML配置的Bean。
+    * @param inputSource the SAX InputSource to read from
+    * @param resource the resource descriptor for the XML file
+    */
+protected int doLoadBeanDefinitions(InputSource inputSource, Resource resource)
+        throws BeanDefinitionStoreException {
+
+    try {
+        Document doc = doLoadDocument(inputSource, resource); // 将Bean定义资源转换成Document对象
+        int count = registerBeanDefinitions(doc, resource);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Loaded " + count + " bean definitions from " + resource);
+        }
+        return count;
+    }
+    catch (BeanDefinitionStoreException ex) {
+        throw ex;
+    }
+    catch (SAXParseException ex) {
+        throw new XmlBeanDefinitionStoreException(resource.getDescription(),
+                "Line " + ex.getLineNumber() + " in XML document from " + resource + " is invalid", ex);
+    }
+    catch (SAXException ex) {
+        throw new XmlBeanDefinitionStoreException(resource.getDescription(),
+                "XML document from " + resource + " is invalid", ex);
+    }
+    catch (ParserConfigurationException ex) {
+        throw new BeanDefinitionStoreException(resource.getDescription(),
+                "Parser configuration exception parsing XML from " + resource, ex);
+    }
+    catch (IOException ex) {
+        throw new BeanDefinitionStoreException(resource.getDescription(),
+                "IOException parsing XML document from " + resource, ex);
+    }
+    catch (Throwable ex) {
+        throw new BeanDefinitionStoreException(resource.getDescription(),
+                "Unexpected exception parsing XML document from " + resource, ex);
+    }
+}
+
+// 使用配置的DocumentLoader加载XML定义文件为Document.
+protected Document doLoadDocument(InputSource inputSource, Resource resource) throws Exception {
+    return this.documentLoader.loadDocument(inputSource, getEntityResolver(), this.errorHandler,
+            getValidationModeForResource(resource), isNamespaceAware());
+}
+```
+
+通过源码分析，载入 Bean 定义资源文件的最后一步是将 Bean 定义资源转换为 Document 对象，该过程由 `documentLoader` 实现。
+
+##### DocumentLoader将Bean定义资源转换为Document对象
+
+`DocumentLoader` 将 Bean 定义资源转换成 Document 对象的源码如下：
+
+```java
+// 使用标准的JAXP将载入的Bean定义资源转换成document对象
+@Override
+public Document loadDocument(InputSource inputSource, EntityResolver entityResolver,
+        ErrorHandler errorHandler, int validationMode, boolean namespaceAware) throws Exception {
+
+    // 创建文件解析器工厂
+    DocumentBuilderFactory factory = createDocumentBuilderFactory(validationMode, namespaceAware);
+    if (logger.isTraceEnabled()) {
+        logger.trace("Using JAXP provider [" + factory.getClass().getName() + "]");
+    }
+    // 创建文档解析器
+    DocumentBuilder builder = createDocumentBuilder(factory, entityResolver, errorHandler);
+    return builder.parse(inputSource); // 解析
+}
+
+protected DocumentBuilderFactory createDocumentBuilderFactory(int validationMode, boolean namespaceAware)
+        throws ParserConfigurationException {
+
+    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    factory.setNamespaceAware(namespaceAware);
+
+    // 设置解析XML的校验
+    if (validationMode != XmlValidationModeDetector.VALIDATION_NONE) {
+        factory.setValidating(true);
+        if (validationMode == XmlValidationModeDetector.VALIDATION_XSD) {
+            // Enforce namespace aware for XSD...
+            factory.setNamespaceAware(true);
+            try {
+                factory.setAttribute(SCHEMA_LANGUAGE_ATTRIBUTE, XSD_SCHEMA_LANGUAGE);
+            }
+            catch (IllegalArgumentException ex) {
+                ParserConfigurationException pcex = new ParserConfigurationException(
+                        "Unable to validate using XSD: Your JAXP provider [" + factory +
+                        "] does not support XML Schema. Are you running on Java 1.4 with Apache Crimson? " +
+                        "Upgrade to Apache Xerces (or Java 1.5) for full XSD support.");
+                pcex.initCause(ex);
+                throw pcex;
+            }
+        }
+    }
+    return factory;
+}
+```
+
+该解析过程调用 JavaEE 标准的 JAXP 标准进行处理。
+
+至此 Spring IOC 容器根据定位的 Bean 定义资源文件，将其加载读入并转换成为 Document 对象过程完成。
+
+接下来要继续分析 Spring IOC 容器将载入的 Bean 定义资源文件转换为 Document 对象之后，是如何将其解析为 Spring IOC 管理的Bean 对象并将其注册到容器中的。
+
+##### XmlBeanDefinitionReader解析载入的Bean定义资源文件
+
+`XmlBeanDefinitionReader` 类中的 `doLoadBeanDefinitions` 方法是从特定 XML 文件中实际载入 Bean 定义资源的方法，该方法在载入Bean 定义资源之后将其转换为 Document 对象，接下来调用 `registerBeanDefinitions` 启动 Spring IOC 容器对 Bean 定义的解析过程，`registerBeanDefinitions` 方法源码如下：
+
+```java
+// 按照Spring的Bean语义要求将Bean定义资源解析并转换为容器内部数据结构 
+public int registerBeanDefinitions(Document doc, Resource resource) throws BeanDefinitionStoreException {
+    BeanDefinitionDocumentReader documentReader = createBeanDefinitionDocumentReader();
+    int countBefore = getRegistry().getBeanDefinitionCount();
+    // 解析过程入口，这里使用了委派模式，具体的解析实现过程有实现类DefaultBeanDefinitionDocumentReader完成  
+    documentReader.registerBeanDefinitions(doc, createReaderContext(resource));
+    return getRegistry().getBeanDefinitionCount() - countBefore;  // 返回此次解析了多少个对象
+}
+
+// 创建BeanDefinitionDocumentReader对象，解析Document对象  
+protected BeanDefinitionDocumentReader createBeanDefinitionDocumentReader() {
+    return BeanUtils.instantiateClass(this.documentReaderClass);
+}
+
+/**
+    * Create the {@link XmlReaderContext} to pass over to the document reader.
+    */
+public XmlReaderContext createReaderContext(Resource resource) {
+    return new XmlReaderContext(resource, this.problemReporter, this.eventListener,
+            this.sourceExtractor, this, getNamespaceHandlerResolver());
+}
+```
+
+Bean 定义资源的载入解析分为以下两个过程：
+
+- 首先，通过调用 XML 解析器将 Bean 定义资源文件转换得到 Document 对象，但是这些 Document 对象并没有按照 Spring 的 Bean规则进行解析，这一步是载入的过程；
+- 其次，在完成通用的 XML 解析之后，按照 Spring 的 Bean 规则对 Document 对象进行解析。
+
+按照 Spring 的 Bean 规则对 Document 对象解析的过程是在接口 `BeanDefinitionDocumentReader` 的实现类`DefaultBeanDefinitionDocumentReader` 中实现的。
+
+##### DefaultBeanDefinitionDocumentReader对Bean定义的Document对象解析
+
+`BeanDefinitionDocumentReader` 接口通过 `registerBeanDefinitions` 方法调用其实现类 `DefaultBeanDefinitionDocumentReader` 对Document 对象进行解析，解析的代码如下：
+
+```java
+@Override
+public void registerBeanDefinitions(Document doc, XmlReaderContext readerContext) {
+    this.readerContext = readerContext;
+    doRegisterBeanDefinitions(doc.getDocumentElement());
+}
+
+// 注册<beans/>配置的Beans
+@SuppressWarnings("deprecation")  // for Environment.acceptsProfiles(String...)
+protected void doRegisterBeanDefinitions(Element root) {
+    // Any nested <beans> elements will cause recursion in this method. In
+    // order to propagate and preserve <beans> default-* attributes correctly,
+    // keep track of the current (parent) delegate, which may be null. Create
+    // the new (child) delegate with a reference to the parent for fallback purposes,
+    // then ultimately reset this.delegate back to its original (parent) reference.
+    // this behavior emulates a stack of delegates without actually necessitating one.
+    BeanDefinitionParserDelegate parent = this.delegate;
+    this.delegate = createDelegate(getReaderContext(), root, parent);
+
+    if (this.delegate.isDefaultNamespace(root)) {
+        String profileSpec = root.getAttribute(PROFILE_ATTRIBUTE);
+        if (StringUtils.hasText(profileSpec)) {
+            String[] specifiedProfiles = StringUtils.tokenizeToStringArray(
+                    profileSpec, BeanDefinitionParserDelegate.MULTI_VALUE_ATTRIBUTE_DELIMITERS);
+            // We cannot use Profiles.of(...) since profile expressions are not supported
+            // in XML config. See SPR-12458 for details.
+            if (!getReaderContext().getEnvironment().acceptsProfiles(specifiedProfiles)) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Skipped XML bean definition file due to specified profiles [" + profileSpec +
+                            "] not matching: " + getReaderContext().getResource());
+                }
+                return;
+            }
+        }
+    }
+
+    preProcessXml(root);
+    parseBeanDefinitions(root, this.delegate); // 从Document的根元素开始进行Bean定义的Document对象  
+    postProcessXml(root);
+
+    this.delegate = parent;
+}
+```
+
+##### BeanDefinitionParserDelegate解析Bean定义资源文件生成BeanDefinition
+
+```java
+/**
+    * Parse the elements at the root level in the document:
+    * "import", "alias", "bean".
+    * @param root the DOM root element of the document
+    */
+protected void parseBeanDefinitions(Element root, BeanDefinitionParserDelegate delegate) {
+    if (delegate.isDefaultNamespace(root)) {
+        NodeList nl = root.getChildNodes();
+        for (int i = 0; i < nl.getLength(); i++) {
+            Node node = nl.item(i);
+            if (node instanceof Element) {
+                Element ele = (Element) node;
+                if (delegate.isDefaultNamespace(ele)) {
+                    parseDefaultElement(ele, delegate);
+                }
+                else {
+                    delegate.parseCustomElement(ele);
+                }
+            }
+        }
+    }
+    else {
+        delegate.parseCustomElement(root);
+    }
+}
+
+private void parseDefaultElement(Element ele, BeanDefinitionParserDelegate delegate) {
+      
+    // 如果元素节点是<Import>导入元素，进行导入解析
+    if (delegate.nodeNameEquals(ele, IMPORT_ELEMENT)) {
+        importBeanDefinitionResource(ele);
+    }
+    // 如果元素节点是<Alias>别名元素，进行别名解析 
+    else if (delegate.nodeNameEquals(ele, ALIAS_ELEMENT)) {
+        processAliasRegistration(ele);
+    }
+    // 如果元素节点<Bean>元素, 按照Spring的Bean规则解析元素  
+    else if (delegate.nodeNameEquals(ele, BEAN_ELEMENT)) {
+        processBeanDefinition(ele, delegate);
+    }
+    // 如果元素节点<Beans>元素，即它是嵌套类型的
+    else if (delegate.nodeNameEquals(ele, NESTED_BEANS_ELEMENT)) {
+        // 递归解析
+        doRegisterBeanDefinitions(ele);
+    }
+}
+```
+
+解析 Bean 生成 `BeanDefinitionHolder` 的方法：
+
+```java
+/**
+    * Process the given bean element, parsing the bean definition
+    * and registering it with the registry.
+    */
+protected void processBeanDefinition(Element ele, BeanDefinitionParserDelegate delegate) {
+    BeanDefinitionHolder bdHolder = delegate.parseBeanDefinitionElement(ele);
+    if (bdHolder != null) {
+        bdHolder = delegate.decorateBeanDefinitionIfRequired(ele, bdHolder);
+        try {
+            // 注册最终的装饰实例
+            BeanDefinitionReaderUtils.registerBeanDefinition(bdHolder, getReaderContext().getRegistry());
+        }
+        catch (BeanDefinitionStoreException ex) {
+            getReaderContext().error("Failed to register bean definition with name '" +
+                    bdHolder.getBeanName() + "'", ele, ex);
+        }
+        // Send registration event.
+        getReaderContext().fireComponentRegistered(new BeanComponentDefinition(bdHolder));
+    }
+}
+```
+
+（这里就不展开了，无非就是解析XML各种元素，来生成 `BeanDefinition`）
+
+##### 解析过后的BeanDefinition在IoC容器中的注册
+
+Document 对象的解析后得到封装 `BeanDefinition` 的 `BeanDefinitionHold` 对象，然后调用 `BeanDefinitionReaderUtils` 的`registerBeanDefinition` 方法向 IOC 容器注册解析的 Bean，`BeanDefinitionReaderUtils` 的注册的源码如下：
+
+```java
+// 通过BeanDefinitionRegistry将BeanDefinitionHolder注册到BeanFactory
+public static void registerBeanDefinition(
+        BeanDefinitionHolder definitionHolder, BeanDefinitionRegistry registry)
+        throws BeanDefinitionStoreException {
+
+    // Register bean definition under primary name.
+    String beanName = definitionHolder.getBeanName();
+    registry.registerBeanDefinition(beanName, definitionHolder.getBeanDefinition());
+
+    // Register aliases for bean name, if any.
+    String[] aliases = definitionHolder.getAliases();
+    if (aliases != null) {
+        for (String alias : aliases) {
+            registry.registerAlias(beanName, alias);
+        }
+    }
+}
+```
+
+当调用 `BeanDefinitionReaderUtils` 向 IOC 容器注册解析的 `BeanDefinition` 时，真正完成注册功能的是 `DefaultListableBeanFactory`。
+
+##### DefaultListableBeanFactory向IOC容器注册解析后的BeanDefinition
+
+IOC 容器本质上就是一个 `beanDefinitionMap`， 注册即将 BeanDefinition put 到 map 中：
+
+```java
+/** Map of bean definition objects, keyed by bean name. */
+private final Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>(256);
+
+/** Map from bean name to merged BeanDefinitionHolder. */
+private final Map<String, BeanDefinitionHolder> mergedBeanDefinitionHolders = new ConcurrentHashMap<>(256);
+
+
+@Override
+public void registerBeanDefinition(String beanName, BeanDefinition beanDefinition)
+        throws BeanDefinitionStoreException {
+
+    Assert.hasText(beanName, "Bean name must not be empty");
+    Assert.notNull(beanDefinition, "BeanDefinition must not be null");
+
+    if (beanDefinition instanceof AbstractBeanDefinition) {
+        try {
+            ((AbstractBeanDefinition) beanDefinition).validate();
+        }
+        catch (BeanDefinitionValidationException ex) {
+            throw new BeanDefinitionStoreException(beanDefinition.getResourceDescription(), beanName,
+                    "Validation of bean definition failed", ex);
+        }
+    }
+
+    BeanDefinition existingDefinition = this.beanDefinitionMap.get(beanName);
+    // 如果已经注册
+    if (existingDefinition != null) {
+        // 检查是否可以覆盖
+        if (!isAllowBeanDefinitionOverriding()) {
+            throw new BeanDefinitionOverrideException(beanName, beanDefinition, existingDefinition);
+        }
+        else if (existingDefinition.getRole() < beanDefinition.getRole()) {
+            // e.g. was ROLE_APPLICATION, now overriding with ROLE_SUPPORT or ROLE_INFRASTRUCTURE
+            if (logger.isInfoEnabled()) {
+                logger.info("Overriding user-defined bean definition for bean '" + beanName +
+                        "' with a framework-generated bean definition: replacing [" +
+                        existingDefinition + "] with [" + beanDefinition + "]");
+            }
+        }
+        else if (!beanDefinition.equals(existingDefinition)) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Overriding bean definition for bean '" + beanName +
+                        "' with a different definition: replacing [" + existingDefinition +
+                        "] with [" + beanDefinition + "]");
+            }
+        }
+        else {
+            if (logger.isTraceEnabled()) {
+                logger.trace("Overriding bean definition for bean '" + beanName +
+                        "' with an equivalent definition: replacing [" + existingDefinition +
+                        "] with [" + beanDefinition + "]");
+            }
+        }
+        // 覆盖
+        this.beanDefinitionMap.put(beanName, beanDefinition);
+    }
+    else {
+        if (hasBeanCreationStarted()) {
+            // Cannot modify startup-time collection elements anymore (for stable iteration)
+            synchronized (this.beanDefinitionMap) {
+                this.beanDefinitionMap.put(beanName, beanDefinition);
+                List<String> updatedDefinitions = new ArrayList<>(this.beanDefinitionNames.size() + 1);
+                updatedDefinitions.addAll(this.beanDefinitionNames);
+                updatedDefinitions.add(beanName);
+                this.beanDefinitionNames = updatedDefinitions;
+                removeManualSingletonName(beanName);
+            }
+        }
+        else {
+            // Still in startup registration phase
+            this.beanDefinitionMap.put(beanName, beanDefinition);
+            this.beanDefinitionNames.add(beanName);
+            removeManualSingletonName(beanName);
+        }
+        //重置所有已经注册过的BeanDefinition的缓存  
+        this.frozenBeanDefinitionNames = null;
+    }
+
+    if (existingDefinition != null || containsSingleton(beanName)) {
+        resetBeanDefinition(beanName);
+    }
+    else if (isConfigurationFrozen()) {
+        clearByTypeCache();
+    }
+}
+```
+
+至此，Bean 定义资源文件中配置的 Bean 被解析过后，已经注册到 IOC 容器中，被容器管理起来，真正完成了 IOC 容器初始化所做的全部工作。现在 IOC 容器中已经建立了整个 Bean 的配置信息，这些 BeanDefinition 信息已经可以使用，并且可以被检索，IOC 容器的作用就是对这些注册的 Bean 定义信息进行处理和维护。这些的注册的 Bean 定义信息是 IOC 容器控制反转的基础，正是有了这些注册的数据，容器才可以进行依赖注入。
+
+##### 总结
+
+现在通过上面的代码，总结一下IOC容器初始化的基本步骤：
+
+![IOC容器初始化的基本步骤](img/IOC容器初始化的基本步骤.png)
+
+- 初始化的入口在容器实现中的 `refresh()` 调用来完成；
+
+- 对 Bean 定义载入 IOC 容器使用的方法是 `loadBeanDefinition`，其中的大致过程如下：
+
+  * 通过 `ResourceLoader` 来完成资源文件位置的定位，`DefaultResourceLoader` 是默认的实现，同时上下文本身就给出了 `ResourceLoader` 的实现，可以从类路径，文件系统，URL 等方式来定为资源位置。如果是 XmlBeanFactory作为 IOC 容器，那么需要为它指定 Bean 定义的资源，也就是说 Bean 定义文件时通过抽象成 Resource 来被 IOC 容器处理的；
+
+  - 通过 BeanDefinitionReader 来完成定义信息的解析和 Bean 信息的注册, 往往使用的是 XmlBeanDefinitionReader 来解析 Bean 的 xml 定义文件 - 实际的处理过程是委托给 BeanDefinitionParserDelegate 来完成的，从而得到 bean 的定义信息，这些信息在 Spring 中使用 BeanDefinition 对象来表示 - 这个名字可以让我们想到loadBeanDefinition,RegisterBeanDefinition 这些相关的方法 - 他们都是为处理 BeanDefinitin 服务的
+  - 容器解析得到 BeanDefinition 以后，需要把它在 IOC 容器中注册，这由 IOC 实现 BeanDefinitionRegistry 接口来实现。注册过程就是在 IOC 容器内部维护的一个HashMap 来保存得到的 BeanDefinition 的过程。这个 HashMap 是 IoC 容器持有 bean 信息的场所，以后对 bean 的操作都是围绕这个HashMap 来实现的.
+
+- 然后我们就可以通过 BeanFactory 和 ApplicationContext 来享受到 Spring IOC 的服务了,在使用 IOC 容器的时候，我们注意到除了少量粘合代码，绝大多数以正确 IoC 风格编写的应用程序代码完全不用关心如何到达工厂，因为容器将把这些对象与容器管理的其他对象钩在一起。基本的策略是把工厂放到已知的地方，最好是放在对预期使用的上下文有意义的地方，以及代码将实际需要访问工厂的地方。 Spring 本身提供了对声明式载入 web 应用程序用法的应用程序上下文,并将其存储在ServletContext 中的框架实现。
+
 ## AOP
 
-**AOP(*Aspect-Oriented Programming*：面向切面编程)**能够将那些与业务无关，却为业务模块所共同调用的逻辑或责任（例如事务处理、日志管理、权限控制等）封装起来，便于减少系统的重复代码，降低模块间的耦合度，提高可拓展性和可维护性。
+> **AOP(*Aspect-Oriented Programming*：面向切面编程)**能够将那些与业务无关，却为业务模块所共同调用的逻辑或责任（例如事务处理、日志管理、权限控制等）封装起来，便于减少系统的重复代码，降低模块间的耦合度，提高可拓展性和可维护性。
 
 ### AOP术语
 
@@ -1296,18 +2171,6 @@ Book.myPreDestory invoke
 
 * **通知（Advice）**：在连接点上执行的行为，通知提供了在 AOP 中需要在切入点所选择的连接点处进行扩展现有行为的手段；包括前置通知(before advice)、后置通知(after advice)、环绕通知(around advice)，在 Spring 中通过代理模式实现 AOP，并通过拦截器模式以环绕连接点的拦截器链织入通知；在 AOP 中表示为**干什么**；
 
-  > **通知类型**
-  >
-  > **前置通知（Before advice）**：在某连接点之前执行的通知，但这个通知不能阻止连接点之前的执行流程（除非它抛出一个异常）。
-  >
-  > **后置通知（After returning advice）**：在某连接点正常完成后执行的通知：例如，一个方法没有抛出任何异常，正常返回。
-  >
-  > **异常通知（After throwing advice）**：在方法抛出异常退出时执行的通知。
-  >
-  > **最终通知（After (finally) advice）**：当某连接点退出的时候执行的通知（不论是正常返回还是异常退出）。
-  >
-  > **环绕通知（Around Advice）**：包围一个连接点的通知，如方法调用。这是最强大的一种通知类型。环绕通知可以在方法调用前后完成自定义的行为。它也会选择是否继续执行连接点或直接返回它自己的返回值或抛出异常来结束执行。
-
 * **方面/切面（Aspect）**：横切关注点的模块化，比如上边提到的日志组件。可以认为是通知、引入和切入点的组合；在 Spring 中可以使用 Schema 和 @AspectJ 方式进行组织实现；在 AOP 中表示为**在哪干和干什么集合**；
 
 * **引入（inter-type declaration）**：也称为内部类型声明，为已有的类添加额外新的字段或方法，Spring 允许引入新的接口（必须对应一个实现）到所有被代理对象（目标对象）, 在 AOP 中表示为**干什么（引入什么）**；
@@ -1316,7 +2179,20 @@ Book.myPreDestory invoke
 
 * **织入（Weaving）**：把切面连接到其它的应用程序类型或者对象上，并创建一个被通知的对象。这些可以在编译时（例如使用AspectJ 编译器），类加载时和运行时完成。Spring 和其他纯 Java AOP 框架一样，在运行时完成织入。在 AOP 中表示为**怎么实现的**；
 
-* **AOP代理（AOP Proxy）**：AOP 框架使用代理模式创建的对象，从而实现在连接点处插入通知（即应用切面），就是通过代理来对目标对象应用切面。在 Spring 中，AOP 代理可以用 JDK 动态代理或 Cglib 代理实现，而通过拦截器模型应用切面。在 AOP 中表示为**怎么实现的一种典型方式**。
+* **AOP代理（AOP Proxy）**：AOP 框架使用代理模式创建的对象，从而实现在连接点处插入通知（即应用切面），就是通过代理来对目标对象应用切面。在 Spring 中，AOP 代理可以用 JDK 动态代理或 CGLib 代理实现，而通过拦截器模型应用切面。在 AOP 中表示为**怎么实现的一种典型方式**。
+
+
+#### 通知类型
+
+**前置通知(Before advice)**：在某连接点之前执行的通知，但这个通知不能阻止连接点之前的执行流程（除非它抛出一个异常）。
+
+**后置通知(After returning advice)**：在某连接点正常完成后执行的通知：例如，一个方法没有抛出任何异常，正常返回。
+
+**异常通知(After throwing advice)**：在方法抛出异常退出时执行的通知。
+
+**最终通知(After (finally) advice)**：当某连接点退出的时候执行的通知（不论是正常返回还是异常退出）。
+
+**环绕通知(Around Advice)**：包围一个连接点的通知，如方法调用。这是最强大的一种通知类型。环绕通知可以在方法调用前后完成自定义的行为。它也会选择是否继续执行连接点或直接返回它自己的返回值或抛出异常来结束执行。
 
 ### Spring AOP
 
@@ -1333,7 +2209,7 @@ Book.myPreDestory invoke
 > 1. 动态织入的方式是在运行时动态将要增强的代码织入到目标类中，这样往往是通过动态代理技术完成的，如 Java JDK 的动态代理(Proxy，底层通过反射实现)或者 CGLIB 的动态代理(底层通过继承实现)，Spring AOP 采用的就是基于运行时增强的代理技术。
 > 2. ApectJ 采用的就是静态织入的方式。ApectJ 主要采用的是编译期织入，在这个期间使用 AspectJ 的 acj 编译器(类似javac)把 aspect 类编译成 class 字节码后，在 Java 目标类编译时织入，即先编译 aspect 类再编译目标类。
 
-`@Aspect` 以及增强的几个注解，来源于 AspectJ 而不是 Spring 包。AspectJ 是更强的 AOP 框架，是实际意义的 AOP 标准；Spring 小组喜欢 `@AspectJ` 注解风格，在 Spring 2.0 使用了和 AspectJ5 一样的注解，并使用 AspectJ 来做切入点解析和匹配。但是，AOP 在运行时仍旧是纯的 Spring AOP，并不依赖于 AspectJ 的编译器或者织入器（weaver）。
+AspectJ 是更强的 AOP 框架，是实际意义的 AOP 标准；Spring 小组喜欢 `@AspectJ` 注解风格，在 Spring 2.0 使用了和 AspectJ5 一样的注解，并使用 AspectJ 来做切入点解析和匹配。但是，AOP 在运行时仍旧是纯的 Spring AOP，并不依赖于 AspectJ 的编译器或者织入器（weaver）。
 
 ![AspectJ织入到Java代码的过程](img/AspectJ织入到Java代码的过程.png)
 
@@ -1436,6 +2312,10 @@ bean（*Service）
 
 #### SpringAOP配置方式
 
+> **Spring AOP 是基于动态代理的**，如果要代理的对象，实现了某个接口，那么 Spring 会使用  JDK 去创建代理对象，而对于没有实现接口的对象，就无法使用 JDK 去进行代理了，这时候 Spring AOP 会使用 CGLib 生成一个被代理对象的子类来作为代理。Spring AOP 需要依赖 IOC 容器来管理，并且只能作用于 IOC 容器。
+>
+> <img src="img/Spring AOP.jpg" style="zoom:80%;" />
+
 ##### 接口使用JDK代理
 
 ```java
@@ -1482,7 +2362,7 @@ public class JdkProxyServiceImpl implements IJdkProxyService {
 public class LogAspect {
 
     // 定义一个切点
-    @Pointcut("execution(* tech.pdai.springframework.service..*.*(..))")
+    @Pointcut("execution(* com.xiao.springtest.service..*.*(..))")
     private void pointCutMethod() {
     }
 
@@ -1547,7 +2427,7 @@ JdkProxyServiceImpl.doMethod3()
 最终通知
 ```
 
-##### 非接口使用Cglib代理
+##### 非接口使用CGLib代理
 
 ```java
 // 类定义
@@ -1596,11 +2476,21 @@ CglibProxyDemoServiceImpl.doMethod3()
 最终通知
 ```
 
+#### Spring AOP 执行顺序
+
+正常流程：
+
+![SpringAOP执行顺序(正常)](img/SpringAOP执行顺序(正常).png)
+
+异常流程：
+
+![SpringAOP执行顺序(异常)](img/SpringAOP执行顺序(异常).png)
+
 #### SpringAOP多种增强通知的顺序
 
 如果有多个通知想要在同一连接点运行会发生什么？Spring AOP 遵循跟 AspectJ 一样的优先规则来确定通知执行的顺序。 在“进入”连接点的情况下，最高优先级的通知会先执行（所以给定的两个前置通知中，优先级高的那个会先执行）。 在“退出”连接点的情况下，最高优先级的通知会最后执行（所以给定的两个后置通知中， 优先级高的那个会第二个执行）。
 
-当定义在不同的切面里的两个通知都需要在一个相同的连接点中运行， 那么除非指定，否则执行的顺序是未知的。可以通过指定优先级来控制执行顺序。 在标准的 Spring 方法中可以在切面类中实现 `org.springframework.core.Ordered` 接口，`Ordered.getValue()` 方法返回值（或者注解值）较低的那个有更高的优先级。
+当定义在不同的切面里的两个通知都需要在一个相同的连接点中运行， 那么除非指定，否则执行的顺序是未知的。可以通过指定优先级来控制执行顺序。 在标准的 Spring 方法中可以在切面类中实现 `org.springframework.core.Ordered` 接口，`Ordered.getValue()` 方法返回值较低的那个有更高的优先级。
 
 ```java
 // 实现接口的方式
@@ -1615,164 +2505,127 @@ public class MyAspect implements Ordered {
 }
 ```
 
+也可以使用 `@Order` 注解，`value` 属性越小的优先级越高：
+
+```java
+@Service
+public class UserService {
+
+    public void addUser(String username) {
+        System.out.println("User added: " + username);
+    }
+
+    public void deleteUser(String username) {
+        System.out.println("User deleted: " + username);
+    }
+}
+```
+
+```java
+@Aspect
+@Component
+@Order(2)
+public class FirstAspect {
+
+    @Before("execution(* com.xiao.springboottest.service.UserService.addUser(..)) && args(username)")
+    public void logBeforeAddUser(String username) {
+        System.out.println("FirstAspect：Before adding user: " + username);
+    }
+
+    @After("execution(* com.xiao.springboottest.service.UserService.deleteUser(..)) && args(username)")
+    public void logAfterDeleteUser(String username) {
+        System.out.println("FirstAspect：After deleting user: " + username);
+    }
+}
+```
+
+```java
+@Aspect
+@Component
+@Order(2)
+public class SecondAspect {
+
+    @Before("execution(* com.xiao.springboottest.service.UserService.addUser(..)) && args(username)")
+    public void logBeforeAddUser(String username) {
+        System.out.println("SecondAspect：Before adding user: " + username);
+    }
+
+    @After("execution(* com.xiao.springboottest.service.UserService.deleteUser(..)) && args(username)")
+    public void logAfterDeleteUser(String username) {
+        System.out.println("SecondAspect：After deleting user: " + username);
+    }
+}
+```
+
+输出结果：
+
+```java
+SecondAspect：Before adding user: xiao
+FirstAspect：Before adding user: xiao
+User added: xiao
+User deleted: xiao
+FirstAspect：After deleting user: xiao
+SecondAspect：After deleting user: xiao
+```
+
 当定义在相同的切面里的两个通知都需要在一个相同的连接点中运行， 执行的顺序是未知的（因为这里没有方法通过反射 javac 编译的类来获取声明顺序）。考虑在每个切面类中按连接点压缩这些通知方法到一个通知方法，或者重构通知的片段到各自的切面类中 - 它能在切面级别进行排序。
 
+#### Advisor
 
+Advisor 的作用是将切入点和通知组合在一起，告诉 Spring 在何处以及何时应用通知。Spring 提供了多种类型的 Advisor，其中最常见的包括：
 
-### Spring AOP
+* **Before Advisor**：在目标方法执行前执行通知；
 
-**Spring AOP 是基于动态代理的**，如果要代理的对象，实现了某个接口，那么 Spring 会使用  JDK 去创建代理对象，而对于没有实现接口的对象，就无法使用 JDK 去进行代理了，这时候 Spring AOP 会使用 CGLib 生成一个被代理对象的子类来作为代理。Spring AOP 需要依赖 IOC 容器来管理，并且只能作用于 IOC 容器。
+* **After Advisor**：在目标方法执行后执行通知，无论方法是否抛出异常；
 
+* **AfterReturning Advisor**：在目标方法成功返回后执行通知；
 
+* **AfterThrowing Advisor**：在目标方法抛出异常后执行通知；
 
-<img src="https://note1145141919810.oss-cn-hangzhou.aliyuncs.com/Spring AOP.jpg" style="zoom: 80%;" />
+* **Around Advisor**：在目标方法之前和之后执行通知，可完全控制方法的执行。
 
-#### AOP 相关概念
-
-##### 切面(Aspect)
-
-- 切面是一个横切关注点的模块化，一个切面能够包含同一个类型的不同增强方法，比如说事务处理和日志处理可以理解为两个切面；
-- 切面由切入点和通知组成，它既包含了横切逻辑的定义，也包括了切入点的定义；
-- Spring AOP 就是负责实施切面的框架，它将切面所定义的横切逻辑织入到切面所指定的连接点中。
+以下是一个更具体的示例，演示了如何在 Spring 中创建一个 Before Advisor，并将其应用于一个简单的目标对象上，以在目标方法执行前执行通知。
 
 ```java
-@Component
-@Aspect
-public class LogAspect {
+@Service
+public class MyService {
+
+    public void doSomething() {
+        System.out.println("MyService: Doing something...");
+    }
 }
 ```
 
-##### 目标对象(Target)
-
-目标对象指将要被增强的对象，即包含主业务逻辑的类对象。或者说是被一个或者多个切面所通知的对象。
-
-##### 连接点(JoinPoint)
-
-程序执行过程中明确的点，如方法的调用或特定的异常被抛出。连接点由两个信息确定：
-
-- 方法(表示程序执行点，即在哪个目标方法)
-- 相对点(表示方位，即目标方法的什么位置，比如调用前，后等)
-
-简单来说，连接点就是被拦截到的程序执行点，因为Spring AOP 只支持方法类型的连接点，所以在 Spring 中连接点就是被拦截到的方法。
+现在，创建一个 Before Advisor，并定义一个通知：
 
 ```java
-@Before("pointcut()")
-public void log(JoinPoint joinPoint) { //这个JoinPoint参数就是连接点
+public class MyBeforeAdvice implements MethodBeforeAdvice {
+
+    @Override
+    public void before(Method method, Object[] args, Object target) throws Throwable {
+        System.out.println("Before Advice: Logging before method execution");
+    }
 }
 ```
 
-##### 切入点(PointCut)
-
-切入点是对连接点进行拦截的条件定义。切入点表达式如何和连接点匹配是 AOP 的核心，Spring 缺省使用 AspectJ 切入点语法。
-
-一般认为，所有的方法都可以认为是连接点，但是我们并不希望在所有的方法上都添加通知，而切入点的作用就是提供一组规则(使用 AspectJ pointcut expression language 来描述来匹配连接点，给满足规则的连接点添加通知。
+在上述示例中，`MyBeforeAdvice` 实现了 `MethodBeforeAdvice` 接口，它的 `before` 方法将在目标方法执行前被调用。现在，创建一个代理工厂，并将目标对象和 Before Advisor 添加到代理工厂中：
 
 ```java
-// 切入点的匹配规则是com.ljw.test.aop.service包下的所有类的所有函数。
-@Pointcut("execution(* com.ljw.test.aop.service..*.*(..))")
-public void Pointcut() {}
+ // 创建一个目标对象
+MyService target = new MyService();
+// 创建一个 Before Advisor
+MyBeforeAdvice beforeAdvice = new MyBeforeAdvice();
+// 创建一个代理工厂
+ProxyFactory proxyFactory = new ProxyFactory();
+proxyFactory.setTarget(target);
+proxyFactory.addAdvice(beforeAdvice);
+// 获取代理对象
+MyService proxy = (MyService) proxyFactory.getProxy();
+// 调用代理方法，将触发通知
+proxy.doSomething();
 ```
 
-整个表达式可以分为四个部分：
-
-1、第一个 `*` 号：表示返回类型， `*` 号表示所有的类型
-
-2、包名: 表示需要拦截的包名，后面的 `..` 表示 `com.ljw.test.aop.service` 包和其所有子包下所有类的方法
-
-3、第二个 `*` 号： 表示类名，`*` 号表示所有的类。
-
-4、`*(..)`： 第三个 `*` 号为方法名，`*` 号表示所有的方法，后面括弧里面表示方法的参数，`..` 表示任何参数
-
-其它例子：
-
-```java
-// com.ljw.controller包中所有的类的所有方法切面
-@Pointcut("execution(public * com.ljw.controller.*.*(..))")
-// 只针对UserController类切面
-@Pointcut("execution(public * com.ljw.controller.UserController.*(..))")
-// 统一切点,对com.ljw.controller及其子包中所有的类的所有方法切面
-@Pointcut("execution(* com.ljw.controller.*.*(..))")
-```
-
-##### 通知(Advice)
-
-通知是指拦截到连接点之后要执行的代码，包括了 `around`、`before` 和 `after` 等不同类型的通知。Spring AOP 框架以拦截器来实现通知模型，并维护一个以连接点为中心的拦截器链。
-
-```java
-// @Before说明这是一个前置通知，log函数中是要前置执行的代码，JoinPoint是连接点
-@Before("pointcut()")
-public void log(JoinPoint joinPoint) { 
-}
-```
-
-##### 织入(Weaving)
-
-织入是将切面和业务逻辑对象连接起来, 并创建通知代理的过程。织入可以在编译时，类加载时和运行时完成。在编译时进行织入就是静态代理，而在运行时进行织入则是动态代理。
-
-##### 增强器(Advisor)
-
-Advisor 是切面的另外一种实现，能够将通知以更为复杂的方式织入到目标对象中，是将通知包装为更复杂切面的装配器。
-
-Advisor 由切入点和 Advice 组成。
-
-Advisor 这个概念来自于 Spring 对 AOP 的支持，在 AspectJ 中是没有等价的概念的。Advisor 就像是一个小的自包含的切面，这个切面只有一个通知。切面自身通过一个 Bean 表示，并且必须实现一个默认接口。
-
-```java
-// AbstractPointcutAdvisor是默认接口
-public class LogAdvisor extends AbstractPointcutAdvisor {
-     private Advice advice; // Advice
-     private Pointcut pointcut; // 切入点
-
-     @PostConstruct
-     public void init() {
-     // AnnotationMatchingPointcut是依据修饰类和方法的注解进行拦截的切入点
-     this.pointcut = new AnnotationMatchingPointcut((Class) null, Log.class);
-     // 通知
-     this.advice = new LogMethodInterceptor();
-     }
-}
-```
-
-#### Spring AOP 常用注解
-
-|     注解名      |                             功能                             |
-| :-------------: | :----------------------------------------------------------: |
-|     @Aspect     |               把当前类标识为一个切面供容器读取               |
-|    @Pointcut    | 切入点是对连接点进行拦截的条件定义，在程序中主要体现为书写切入点表达式 |
-|     @Before     |       标识一个前置增强方法，相当于 BeforeAdvice 的功能       |
-| @AfterReturning |    后置增强，相当于 AfterReturningAdvice，方法退出时执行     |
-| @AfterThrowing  |              异常抛出增强，相当于 ThrowsAdvice               |
-|     @After      |        final 增强，不管是抛出异常或者正常退出都会执行        |
-|     @Around     |              环绕增强，相当于 MethodInterceptor              |
-
-#### Spring AOP 执行顺序
-
-执行成功：
-
-![SpringAOP执行顺序(成功)](https://note1145141919810.oss-cn-hangzhou.aliyuncs.com/SpringAOP%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F(%E6%88%90%E5%8A%9F).png)
-
-执行失败：
-
-<img src="https://note1145141919810.oss-cn-hangzhou.aliyuncs.com/SpringAOP%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F(%E5%A4%B1%E8%B4%A5).png" alt="SpringAOP执行顺序(失败)"  />
-
-### Spring AOP和Aspectj的区别
-
-#### 误区
-
-曾经以为 AspectJ 是Spring AOP一部分，是因为 Spring AOP 使用了 AspectJ 的 Annotation（使用了 Aspect 来定义切面,使用 Pointcut 来定义切入点，使用 Advice 来定义增强处理），但是并没有使用它的编译器和织入器。其实现原理是 JDK动态代理和 CGLIB，在运行时生成代理类。
-
-### jdk动态代理，cglib，Spring AOP和Aspectj关系
-
-* Spring AOP 和 Aspectj 是两种实现 AOP 的框架
-
-* Spring AOP采用的是动态代理
-  - 动态代理有两种底层技术实现：
-    - JDK 动态代理（默认有接口的目标类使用 JDK 动态代理）
-    - CGLIB（没有接口或有接口的目标类使用）
-
-- Spring AOP 采用了 Aspectj 包提供的注解，但是底层编译器和织入器并不是 Aspectj
-
-* Aspectj 采用的是静态代理
+可以根据需要实现不同类型的 Advisor，并定义不同类型的通知来实现各种横切关注点。
 
 ## FactoryBean
 
@@ -2130,11 +2983,13 @@ public class FieldValueTestBean {
 
 ### 1、Bean相关
 
-> Spring 里面的 Bean 就类似是定义的一个组件，而这个组件的作用就是实现某个功能的，这里所定义的 Bean 就相当于给了一个更为简便的方法来调用这个组件去实现要完成的功能。
+> Spring 中的 Bean 就类似是定义的一个组件，而这个组件的作用就是实现某个功能的，这里所定义的 Bean 就相当于给了一个更为简便的方法来调用这个组件去实现要完成的功能。
+>
+> Spring 中的 Bean 将 `name` 作为 唯一识别标志，不可重名。 
 
 #### @Bean
 
-标注方法，告诉 Spring 当前方法将会返回一个对象，这个对象作为 Bean  在 Spring 容器中注册，默认 Bean 的名称为首字母缩写驼峰命名的方法名，可通过 `name` 属性指定 Bean 的名称。
+标注方法，告诉 Spring 当前方法将会返回一个对象，这个对象作为 Bean  在 Spring 容器中注册。当没有显式命名时，默认 Bean 的名称为方法名。
 
 > `@Component` 和 `@Bean` 的区别
 >
@@ -2142,19 +2997,26 @@ public class FieldValueTestBean {
 > 2. `@Component` 通常是通过类路径扫描来自动侦测以及自动装配到 Spring 容器中（可以使用 `@ComponentScan` 注解定义要扫描的路径从中找出标识了需要装配的类自动装配到 Spring 容器中）。`@Bean` 注解通常是在标有该注解的方法中定义产生这个 Bean，`@Bean` 告诉 Spring 当前方法将会返回一个 Bean 实例。
 > 3. `@Bean` 注解比 `@Component` 注解的自定义性更强，而且很多地方我们只能通过 `@Bean` 注解来注册 Bean。比如当我们引用第三方库中的类需要装配到 Spring 容器时，则只能通过 `@Bean` 来实现。
 
+通常，`@Bean` 方法在 `@Configuration` 类中声明。
+
 ```java
-@Bean
-public User userPrototype() {
-    return new User();
+@Configuration
+public class MainConfig {
+    @Bean
+	public User userPrototype() {
+    	return new User();
+	}
 }
 ```
 
 `@Bean` 注解的几个属性：
 
-* `name` Bean 的名称
-* `initMethod` Bean 的初始化方法
-* `destroyMethod` Bean 的销毁方法
+* `name` Bean 的名称；
+* `initMethod` Bean 的初始化方法；
+* `destroyMethod` Bean 的销毁方法；
 * `autowireCandidate` 设置当前 Bean 在被其他对象作为自动注入对象的时候，是否作为候选 Bean，默认值是 `true`。
+
+
 
 #### @PostConstruct，@PreDestroy
 
@@ -2218,6 +3080,10 @@ public User userPrototype() {
     return new User();
 }
 ```
+
+#### @DependsOn
+
+会在创建此 Bean 前创建特定的其他 Bean，以及该 Bean 通过直接引用表示的任何依赖关系。
 
 #### @Order
 
@@ -2302,6 +3168,15 @@ com.xiao.demo.service.OrderService@a38c7fe
 该注解的作用就是指定某个类或者某个方法在特定的配置环境下生效，只要是被 `@Component` 或 `@Configuration` 注解的类都可以使用 `@Profile` 注解。在依赖注入时，能够根据 `@profile` 标明的环境，将注入符合当前运行环境的相应的 Bean。该注解有一个 `String[]` 类型的属性 `value`，用于指定该 Bean 的生效环境，该属性的元素必须和配置文件中的环境名保持一致。
 
 没有使用该注解说明此时的类和方法在任何的环境下都可以生效。
+
+```java
+//此时该类只能在dev环境下才可以生效，该类的所有方法也只能在该环境下生效
+@Configuration
+@Profile("dev")
+public class Test{
+  ...
+}
+```
 
 ### 2、组件扫描
 
@@ -3233,9 +4108,10 @@ public ResponseStatusException(HttpStatus status, @Nullable String reason, @Null
 
 简单的解释一下：
 
-- **依赖不可变**：其实说的就是 `final` 关键字；
-- **依赖不为空**（省去了对其检查）：当要实例化 `UserServiceImpl` 的时候，由于自己实现了有参数的构造函数，那么就需要 Spring 容器传入所需要的参数，所以就两种情况：1、有该类型的参数->传入，OK 。2：无该类型的参数 -> 报错；
+- **依赖不可变**：通过构造器注入，可以将依赖项声明为 `final`，从而确保一旦设置就不能再更改。不可变对象更容易测试和理解，并且在多线程环境中更加安全。
+- **依赖不为空**（省去了对其检查）：当要实例化 `UserServiceImpl` 的时候，由于自己实现了有参数的构造函数，那么就需要 Spring 容器传入所需要的参数，所以就两种情况：1、有该类型的参数->传入，OK 。2：无该类型的参数 -> 报错。有助于及早发现问题，因为在运行时之前就会发生错误。这比使用属性注入方式更安全，后者可能会导致依赖项为空的情况。
 - **完全初始化的状态**：这个可以跟上面的依赖不为空结合起来，向构造器传参之前，要确保注入的内容不为空，那么肯定要调用依赖组件的构造方法完成实例化。而在 Java 类加载实例化的过程中，构造方法是最后一步（之前如果有父类先初始化父类，然后自己的成员变量，最后才是构造方法），所以返回来的都是初始化之后的状态。
+- **易于理解**：构造器注入将依赖项的初始化放在构造函数中，使得类的依赖关系在创建对象时就变得明确和清晰。
 
 ```java
  @Service
@@ -3258,6 +4134,61 @@ public class UserServiceImpl {
 ```
 
 如果使用 `setter` 注入，缺点显而易见，对于 IOC 容器以外的环境，除了使用反射来提供它需要的依赖之外，无法复用该实现类。而且将一直是个潜在的隐患，因为不调用将一直无法发现 NPE 的存在。
+
+### 属性注入导致依赖为空的情况
+
+当依赖项的作用域是 `prototype`（原型）而被注入到 `singleton`（单例）作用域的 Bean 中时可能会出现该问题。下面是一个具体的例子：
+
+假设有一个 `PrototypeBean` 类，它被定义为原型作用域的 Bean，这意味着每次请求它时，Spring 都会创建一个新的实例：
+
+```java
+@Component
+@Scope("prototype")
+public class PrototypeBean {
+}
+```
+
+然后，有一个 `SingletonBean` 类，它被定义为单例作用域的 Bean，这意味着 Spring 只会创建一个实例并在整个应用程序中共享它：
+
+```java
+@Component
+public class SingletonBean {
+    @Autowired
+    private PrototypeBean prototypeBean;
+}
+```
+
+在上述示例中，`SingletonBean` 类的属性 `prototypeBean` 是一个原型作用域的 Bean。这可能会导致问题，因为单例 Bean 在创建时注入了原型 Bean，但原型 Bean 在整个应用程序中可以被多次使用。这可能导致以下情况之一：
+
+1. **早期注入**：当单例 Bean 在应用程序启动时被创建时，它的原型 Bean 也会被注入。然后，在应用程序的其他地方，原型 Bean 可能已经被销毁，因此依赖项为空。
+2. **延迟注入**：当单例 Bean 在应用程序运行过程中首次访问时才被创建时，原型 Bean 可能已经被多次使用，因此每个新创建的原型 Bean 与单例 Bean 的状态可能不一致。
+
+为了避免这个问题，可以采用以下方式之一：
+
+- 避免在单例 Bean 中注入原型 Bean，尤其是在构造函数中注入。
+- 考虑将原型 Bean 的创建移动到方法调用中，以便在需要时创建新实例。
+
+如果你确实需要在单例 Bean 中使用原型 Bean，并且需要确保每次访问时都是一个新的实例，可以通过 Spring 应用程序上下文手动获取原型 Bean 的实例：
+
+```java
+@Component
+public class SingletonBean {
+
+    @Autowired
+    private ObjectFactory<PrototypeBean> prototypeBeanFactory;
+
+    public String getPrototypeBeanMessage() {
+        // 手动获取原型 Bean 的实例
+        PrototypeBean prototypeBean = prototypeBeanFactory.getObject();
+        prototypeBean.setMessage("This is a new instance");
+        return prototypeBean.getMessage();
+    }
+}
+```
+
+在上述示例中，`SingletonBean` 类使用了 `ObjectFactory<PrototypeBean>` 类型的成员变量 `prototypeBeanFactory`。`ObjectFactory` 是 Spring 提供的一种方式，用于获取原型 Bean 的新实例。在 `getPrototypeBeanMessage` 方法中，我们通过 `prototypeBeanFactory.getObject()` 来获取原型 Bean 的实例，并在需要时对其进行配置和使用。
+
+这样，每次调用 `getPrototypeBeanMessage` 方法时，都会获取一个新的原型 Bean 实例，从而确保每个实例都是独立的。这是一种解决单例与原型依赖问题的方法，确保了单例 Bean 中原型 Bean 的正确使用。
 
 ### Spring AOP 和 AspectJ 之间的区别
 
@@ -3856,992 +4787,54 @@ spring:
 
 验证 URL
 
-## 整合MyBatis
+## 创建一个可执行的命令行任务
 
-### 使用分页插件pagehelper
+在 Spring Boot 中，可以实现 `CommandLineRunner` 接口或 `ApplicationRunner` 接口来创建一个可执行的命令行任务，这两个接口提供了一种在 Spring Boot 应用程序启动后运行自定义代码的方法。这对于执行一些初始化或后台任务非常有用。
 
-#### 一、添加 Maven 依赖
+下面分别介绍这两个接口的用法：
 
-```xml
-<dependency>
-    <groupId>com.github.pagehelper</groupId>
-    <artifactId>pagehelper-spring-boot-starter</artifactId>
-    <version>xxx</version>
-</dependency>
-```
+### 1、 实现  CommandLineRunner  接口
 
-#### 二、配置
-
-`pagehelper.helper-dialect` ：指定分页插件使用哪种语言。
-
-`pagehelper.offset-as-page-num` ：默认为 `false`, 该参数对使用 `RowBounds` 作为分页参数时有效，当为 `true` 时，会将 `RowBounds` 的 `offset` 参数当成 `pageNum` 使用。
-
-`pagehelper.row-bounds-with-count` ： 默认为 `false`，该参数对使用 `RowBounds` 作为分页参数时有效，当该参数值为 `true` 时，使用 `RowBounds` 分页会进行 `count` 查询。
-
-`pagehelper.page-size-zero` ：默认为 `false` ，当该参数为 `true` 时，如果 `pageSize=0` 或者 `RowBounds.limit=0` 就会查询所有结果。
-
-`pagehelper.reasonable` ：分页合理化参数，默认为 `false`，当该值为 `true`，`pageNum<=0` 默认查询第一页，`pageNum>pages` 时会查询最后一页，`false` 时直接根据参数进行查询。
-
-`pagehelper.params` ：为了支持 `startPage(Object params)` 方法，增加该参数来配置参数映射，用于从对象中根据属性名取值，可以配置`pageNum`，`pageSize`，`pageSizeZero`，`reasonable`。不配置时的默认值为`pageNum=pageNum`，`pageSize=pageSize`，`count=countSql`，`reasonable=reasonable`，`pageSizeZero=pageSizeZero`。
-
-`pagehelper.support-methods-arguments` ：支持通过 `Mapper` 接口参数来传递分页参数，默认为 `false`, 分页插件会从查询方法的参数中根据 `params` 配置的字段中取值，查找到合适的就进行分页。
-
-`pagehelper.auto-runtime-dialect` ：默认为 `false`, 为 `true` 时允许在运行时根据多数据源自动识别对应的方言进行分页。
-
-`pagehelper.close-conn` : 默认为 `true`, 当使用运行是动态数据源或者没有设置 `helperDialect` 属性自动获取数据库类型时，会自动获取一个数据库连接，通过该属性来设置是否关闭获取的这个连接，默认为 `true` 关闭，`false` 不会自动关闭。
-
-#### 三、编写 Service 接口
+`CommandLineRunner` 接口要求实现一个 `run` 方法，该方法会在 Spring Boot 应用程序启动后立即执行。方法签名如下：
 
 ```java
-/**
-  * @param currentPage 当前页码
-  * @param pageSize 一页的记录数
-  * @return
-  */
-public PageResult<Employee> page(int currentPage, int pageSize) {
-        Page<Employee> employeePage = PageHelper.startPage(currentPage,pageSize)
-                .doSelectPage(() -> empMapper.getAll());
-        return new PageResult<>(employeePage);
+@Component
+public class MyCommandLineRunner implements CommandLineRunner {
+
+    @Override
+    public void run(String... args) {
+        System.out.println("Command Line Runner executed!");
+        // 在这里执行自定义的初始化代码
     }
+}
 ```
 
-使用 `PageHelper` 查询得到的 `Page` 对象有以下方法：
+### 2、实现 ApplicationRunner 接口
+
+`ApplicationRunner` 接口也用于创建可执行的任务，与 `CommandLineRunner` 不同，它的 `run` 方法接收一个 `ApplicationArguments` 参数，该参数包含了应用程序启动时传递的命令行参数。
 
 ```java
-// 获取当前的页码
-int getPageNum()
-// 获取总页数
-int getPages()
-// 获取总记录数
-long getTotal()
-// 获取当前页的记录集合
-List<E> getResult()
+@Component
+public class MyApplicationRunner implements ApplicationRunner {
+
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
+        System.out.println("Application Runner executed!");
+        // 在这里执行自定义的初始化代码，可以访问命令行参数
+        String[] sourceArgs = args.getSourceArgs();
+        for (String arg : sourceArgs) {
+            System.out.println("Argument: " + arg);
+        }
+    }
+}
 ```
 
 ## 项目部署
 
 ```shell
-java -jar {jar包名}.jar --spring.profiles.active=prod
+# 运行SpringBoot项目
+java -jar {jar包名}.jar --spring.profiles.active={对应运行环境文件，如prod}
 ```
-
-## IDEA插件
-
-### Lombok
-
-> lombok是一个编译级别的插件，它可以在项目编译的时候生成一些代码。
-
-#### POJO类常用注解
-
-##### **@Getter/@Setter**
-
-* 作用类上，生成所有成员变量的 `getter`/`setter` 方法。
-
-* 作用于成员变量上，生成该成员变量的 `getter`/`setter` 方法。可以设定访问权限及是否懒加载等。
-
-##### **@ToString**
-
-作用于类，覆盖默认的 `toString()` 方法，可以通过 `of` 属性限定显示某些字段，通过 `exclude` 属性排除某些字段。
-
-##### **@EqualsAndHashCode**
-
-作用于类，覆盖默认的 `equals()` 和 `hashCode()`。
-
-##### **@NonNull**
-
-作用于成员变量和参数中，标识不能为空，否则抛出空指针异常。
-
-##### **@NoArgsConstructor**
-
-生成无参构造器。
-
-##### **@RequiredArgsConstructor**
-
-生成包含 `final` 和 `@NonNull` 注解的成员变量的构造器。
-
-##### **@AllArgsConstructor**
-
-生成全参构造器。
-
-上述三个生成构造器的方法有 `staticName`，`access` 属性，`staticName` 属性设定将采用静态方法的方式生成实例，`access` 属性用于限定访问权限。
-
-##### **@Data**
-
-作用于类上，是以下注解的集合：`@ToString`，`@EqualsAndHashCode`，`@Getter `，`@Setter`，`@RequiredArgsConstructor`。
-
-##### **@Builder**
-
-作用于类上，将类转变为建造者模式。
-
-创建对象时可以这样：
-
-```java
-User user = User.builder.name("xiao").password("114514").build();
-```
-
-#### 其他重要注解
-
-##### **@Cleanup**
-
-自动关闭资源，针对实现了 `java.io.Closeable` 接口的对象有效，如：典型的IO流对象。
-
-```java
-@Cleanup InputStream in = new FileInputStream(file);
-```
-
-##### **@SneakyThrows**
-
-作用于方法上，可以对受检异常进行捕捉并抛出。
-
-##### @Slf4j
-
-项目中使用 `Slf4j` 日志时经常这样做：
-
-```java
-private static final Logger log = LoggerFactory.getLogger(UserController.class);
-```
-
-在类上使用 `@Slf4j` 后，Lombok 会提供一个名为 `log` 的 `Slf4j` 对象，在类中可以直接使用。
-
-# SpringCloud
-
-> * 微服务把一个庞大的单体应用拆分为一个个的小型服务，比如原来的图书管理项目中，有登录、注册、添加、删除、搜索等功能，那么我们可以将这些功能单独做成一个个小型的 SpringBoot 项目，独立运行。
->
-> * 每个小型的微服务，都可以独立部署和升级，这样，就算整个系统崩溃，那么也只会影响一个服务的运行。
->
-> * 微服务之间使用HTTP进行数据交互，不再是单体应用内部交互了，虽然这样会显得更麻烦，但是带来的好处也是很直接的，甚至能突破语言限制，使用不同的编程语言进行微服务开发，只需要使用HTTP进行数据交互即可。
->
-> * 可以在多台主机来分别部署这些微服务，这样，单机的压力就被分散到多台机器，并且每台机器的配置不一定需要太高，这样就能节省大量的成本，同时安全性也得到很大的保证。
->
-> * 同一个微服务可以同时存在多个，这样当其中一个服务器出现问题时，其他服务器也在运行同样的微服务，这样就可以保证一个微服务的高可用。
-
-## LoadBalancer
-
-### 原理
-
-`SpringCloud` 会启动拦截器 `LoadBalancerInterceptor` 对发起的服务调用请求进行拦截，实现 `ClientHttpRequestInterceptor` 接口：
-
-```java
-@FunctionalInterface
-public interface ClientHttpRequestInterceptor {
-    ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException;
-}
-```
-
-主要是对 `intercept()` 方法的实现：
-
-```java
-public ClientHttpResponse intercept(final HttpRequest request, final byte[] body, final ClientHttpRequestExecution execution) throws IOException {
-        URI originalUri = request.getURI();
-        String serviceName = originalUri.getHost();
-        Assert.state(serviceName != null, "Request URI does not contain a valid hostname: " + originalUri);
-        return (ClientHttpResponse)this.loadBalancer.execute(serviceName, this.requestFactory.createRequest(request, body, execution));
-    }
-```
-
-发起的服务调用请求地址，并不是一个有效的主机名称，而是服务名称，真正的主机名称是通过 `Eureka` 获取的。
-
-方法 `this.loadBalancer.execute()` 具体的实现在 `BlockingLoadBalancerClient`：
-
-```java
- public <T> T execute(String serviceId, LoadBalancerRequest<T> request) throws IOException {
-        // 传入服务的具体名称和具体的请求实体
-     	String hint = this.getHint(serviceId);
-        LoadBalancerRequestAdapter<T, DefaultRequestContext> lbRequest = new LoadBalancerRequestAdapter(request, new DefaultRequestContext(request, hint));
-        Set<LoadBalancerLifecycle> supportedLifecycleProcessors = this.getSupportedLifecycleProcessors(serviceId);
-        supportedLifecycleProcessors.forEach((lifecycle) -> {
-            lifecycle.onStart(lbRequest);
-        });
-     	// 获取对应的服务实例信息
-        ServiceInstance serviceInstance = this.choose(serviceId, lbRequest);
-        if (serviceInstance == null) {
-            supportedLifecycleProcessors.forEach((lifecycle) -> {
-                lifecycle.onComplete(new CompletionContext(Status.DISCARD, lbRequest, new EmptyResponse()));
-            });
-            // 未发现任何服务，抛出异常
-            throw new IllegalStateException("No instances available for " + serviceId);
-        } else {
-            // 成功获取到对应服务器的实例，此时即可发起服务调用
-            return this.execute(serviceId, serviceInstance, lbRequest);
-        }
-    }
-```
-
-实际上在进行负载均衡时，会向 `Eureka` 发起请求，选择一个可用的对应服务，然后返回此服务的主机地址等信息。
-
-### 自定义负载均衡策略
-
-`LoadBalancer` 默认提供两种负载均衡策略：
-
-* `RandomLoadBalancer`：随机分配策略
-* `RoundRobinLoadBalancer`：轮询分配策略（默认）
-
-## Hystrix
-
-在微服务的架构中，服务间通常会形成相互依赖的关系，比如现在有三个微服务节点：A，B 和 C，B 为 A 的消费者，C 为 B 的消费者。假如由于网络波动或者 A 服务自身故障，导致 B 调用 A 服务的线程被挂起进入长时间的等待。在高并发的情况下可能导致 B 的资源被耗竭随之崩溃，从而导致 C 服务也不可用。这种连环式的雪崩效应在微服务中较为常见，为了解决这个问题，服务熔断技术应运而出。熔断一词来自电路学，指的是电路在出现短路状况时，“断路器”能够及时地切断故障电路，避免电路过载发热引发火灾。
-
-
-
-<img src="https://note1145141919810.oss-cn-hangzhou.aliyuncs.com/服务调用故障.png" style="zoom:50%;" >
-
-类似的，微服务架构中的断路器能够及时地发现故障服务，并向服务调用方返回错误响应，而不是长时间的等待。`Spring Cloud Hystrix` 在 `Hystrix` 的基础上进行了封装，提供了服务熔断，服务降级，线程隔离等功能，通过这些功能可以提供服务的容错率。
-
-# Redis
-
-## 数据类型
-
-**Redis 支持五种数据类型：String（字符串），List（列表），Set（集合），Hash（哈希），及  Zset（Sorted Set有序集合）**。
-
-**String(字符串)：**`String` 是 Redis 最基本的类型。`String` 类型是二进制安全的，因此 Redis 的 `String` 可以包含任何数据，比如 `.jpg` 图片或者序列化的对象。
-
-`String` 的数据结构为简单动态字符串(*Simple Dynamic String*)。是可以修改的字符串，内部结构类似于 Java 中的 `ArrayList`，采用预分配冗余空间的方式来减少内存的频繁分配。为当前字符串实际分配的空间一般要高于实际字符串长度。当字符串长度小于 `1M` 时，扩容都是加倍现有的空间，如果超过 `1M`，扩容时一次只会多扩 `1M` 的空间，字符串最大长度为` 512M`。
-
-一般常用在需要计数的场景，比如用户的访问次数、热点文章的点赞转发数量等等。
-
-**List(列表)：**Redis 的 `List` 的实现为一个双向链表。
-
-**Set(集合)：**Redis 的 `Set` 是一个无序集合。底层为一个值为 `NULL` 的哈希表。可以基于 `Set` 轻易实现交集、并集、差集的操作。
-
-**Hash(哈希)：**Redis 的 `Hash` 的底层是一个 `String` 类型的 `field` 和 `value` 的映射表，`Hash` 特别适合用于存储对象。
-
-**Zset(有序集合)：**Redis 的 `Zset` 是一个有序集合，每成员都会关联一个分数(*score*)，Redis 通过分数来为集合中的成员进行从小到大的排序。`Zset` 的成员是唯一的，但分数可以重复。
-
-`Zset` 底层使用了两种数据结构：
-
-（1）`Hash`，`Hash` 的作用就是关联成员 `member` 和分数 `score`，保证成员 `member` 的唯一性，可以通过成员 `member` 找到相应的 `score` 。
-
-（2）跳跃表，跳跃表的目的在于给成员 `member` 排序，根据 `score` 的范围获取成员列表。
-
-## 发布/订阅
-
-```shell
-# 订阅给定的一个或多个频道的信息
-> SUBSCRIBE channel1 [channel2 ...]
-# 退订给定的频道，若没有频道被指定，则退订订阅的所有频道
-> UNSUBSCRIBE [channel1 [channel2 ...]]
-# 将信息推送到指定的频道
-> PUBLISH channel message
-```
-
-## 事务
-
-```shell
-# 标记一个事务块的开始
-> MULTI
-# 执行所有事务块内的命令
-> EXEC
-# 取消事务，放弃执行事务块内的所有命令
-> DISCARD
-# 监视一个(或多个)key，如果在事务执行之前这个(或这些)key被其他命令所改动，那么事务将被打断
-> WATCH key1 [key2 ...]
-# 取消WATCH命令对所有key的监视
-> UNWATCH
-```
-
-从输入 `MULTI` 命令开始，输入的命令都会依次进入命令队列中，但不会执行，直到输入 `EXEC` 后，Redis 才会将之前的命令队列中的命令依次执行。
-
-组队的过程中可以通过 `DISCARD` 来放弃组队。
-
-### 事务特性
-
-#### **没有隔离级别**
-
-当事务开启时，事务期间的命令并没有执行，而是加入队列。只有执行 `exec` 命令时，事务中的命令才会按照顺序一一执行。事务在执行的过程中，不会被其他客户端发送来的命令请求所打断。从而事务间就不会导致数据脏读、不可重复读、幻读，自然也就没有隔离级别。
-
-#### **不保证原子性**
-
-单个 Redis 命令的执行是原子性的，但 Redis 事务的执行并不是原子性的，Redis 没有在事务上增加任何维持原子性的机制。事务可以理解为一个打包的批量执行脚本，但批量指令并非原子化的操作，中间某条指令的失败不会导致前面已做指令的回滚，也不会造成后续的指令不执行。
-
-### **事务的错误处理**
-
-组队中某个命令出现了错误，执行时队列中所有的命令都不会被执行：
-
-```shell
-> MULTI
-OK
-> SET k1 v1
-QUEUED
-> SET k2
-(error) ERR wrong number of arguments for 'set' command
-> EXEC
-(error) EXECABORT Transaction discarded because of previous errors.
-```
-
-如果执行阶段某个命令出现错误，则只有报错的命令不会被执行，而其他的命令都会执行，不会回滚：
-
-```shell
-> MULTI
-OK
-> SET k1 v1
-QUEUED
-> INCR k1
-QUEUED
-> E
-1) OK
-2) (error) ERR value is not an integer or out of range
-```
-
-## 持久化
-
-Redis 提供了两种持久化方案：
-
-* **RDB(*Redis DataBase*)** 持久化可以在指定的时间间隔内生成数据集的时间点快照(*point-in-time snapshot*)。
-* **AOF(*Append Only File*)** 持久化记录服务器执行的所有写操作命令，并在服务器启动时，通过重新执行这些命令来还原数据集。AOF 文件中的命令全部以 Redis 协议的格式来保存，新命令会被追加到文件的末尾。 Redis 还可以在后台对 AOF 文件进行重写(*rewrite*)，使得 AOF 文件的体积不会超出保存数据集状态所需的实际大小。
-
-### RDB快照
-
-默认情况下，Redis 保存数据集快照到磁盘，名为 `dump.rdb` 的二进制文件。可以设置让Redis在 N 秒内至少有 M 次数据集改动时保存数据集，或者也可以手动调用 `SAVE` 或者 `BGSAVE` 命令。这种策略被称为快照。
-
-快照的运作方式:
-
-当 Redis 需要保存 `dump.rdb` 文件时， 服务器执行以下操作：
-
-1、Redis 调用 `fork()` 创建子进程；
-
-2、子进程将数据集写入到一个临时 RDB 文件中；
-
-3、当子进程完成对新 RDB 文件的写入时，Redis 用新 RDB 文件替换原来的 RDB 文件，并删除旧的 RDB 文件；
-
-这种工作方式使得 Redis 可以从写时复制(*copy-on-write*)机制中获益。
-
-## 应用问题解决
-
-[Redis缓存击穿、穿透、雪崩解决方案 - 简书 (jianshu.com)](https://www.jianshu.com/p/b7f822935e28)
-
-### 缓存穿透
-
-一般缓存处理流程：
-
-<img src="D:\file\Documents\编程\img\缓存处理流程.png" style="zoom: 40%;" />
-
-当缓存与数据库中都不存在该数据时，由于当数据库查询不到数据就不会写入缓存，这个时候如果用户不断的恶意发起请求，就会导致这个不存在的数据每次请求都会查询 DB，请求量大的情况下，就会导致 DB 压力过大，直接崩溃。
-
-**解决方案**
-
-**1、对空值缓存：**如果一个查询返回的数据为空（不管是数据是否不存在），我们仍然把这个空结果(NULL)进行缓存，过期时间不宜设置过长，最长不超过 5 分钟。
-
-**2、采用布隆过滤器：**将所有可能存在数据，分别通过多个哈希函数生成多个哈希值，然后将这些哈希值存到一个足够大的 Bitmaps 中，此时一个一定不存在的数据就会被这个 Bitmaps 拦截，从而减少了数据库的查询压力。
-
-**3、 设置可访问的名单（白名单）：**使用 Bitmaps 类型定义一个可以访问的名单，名单 id 作为 Bitmaps 的偏移量，每次访问和 Bitmaps 里面的 id 进行比较，如果访问 id 不在 Bitmaps 里面，进行拦截，不允许访问。
-
-**4、进行实时监控：**当发现 Redis 的命中率开始急速降低，需要排查访问对象和访问的数据，和运维人员配合，可以设置黑名单限制服务。
-
-### 缓存击穿
-
-某一个数据缓存中没有但数据库中有的数据（一般是缓存时间到期），这时由于并发用户特别多，同时读缓存没读到数据，又同时去数据库去取数据，引起数据库压力瞬间增大，严重情况下会直接崩溃。
-
-**解决方案**
-
-**1、预先设置热门数据：**在 Redis 高峰访问之前，把一些热门数据提前存入到 Redis 里面，加大这些热门数据 key 的时长。
-
-**2、实时调整：**现场监控哪些数据热门，实时调整 key 的过期时长。
-
-**3、使用排他锁：**
-
-<img src="D:\file\Documents\编程\img\排他锁解决缓存穿透.png" style="zoom:50%;" />
-
-### 缓存雪崩
-
-缓存中大批量的数据都到了过期时间，从而导致查询数据量巨大，引起数据库压力过大甚至崩溃。
-
-**解决方案**
-
-**1、构建多级缓存架构：**Nginx 缓存 + Redis 缓存 + 其他缓存（Ehcache等）。
-
-**2、使用锁或队列：**用加锁或者队列的方式保证来保证不会有大量的线程对数据库一次性进行读写，从而避免失效时大量的并发请求落到底层存储系统上。
-
-**3、设置过期标志更新缓存：**记录缓存数据是否过期（设置提前量），如果过期会触发通知另外的线程在后台去更新实际 key 的缓存。
-
-**4、将缓存失效时间分散开：**可以在原有的失效时间基础上增加一个随机值，这样每一个缓存的过期时间的重复率就会降低，就很难引发集体失效的事件。
-
-## 常用命令
-
-在终端启动 Redis 客户端：
-
-```shell
-$ redis-cli
-```
-
-在远程服务器上执行命令：
-
-```shell
-$ redis-cli -h host -p port -a password
-```
-
-检测 Redis 服务是否启动：
-
-```shell
-> PING
-PONG # 输出PONG表明服务已启动
-```
-
-查看 Redis 信息：
-
-```shell
-> INFO
-```
-
-### 库操作
-
-```shell
-# 切换到index号数据库
-> SELECT <index>	
-# 查看当前数据库的key的数量
-> DBSIZE	
-# 清空当前库
-> FLUSHDB
-# 清空所有库
-> FLUSHALL
-```
-
-### key 操作
-
-```shell
-# 查看当前库中所有key
-> KEYS *
-# 判断某个key是否存在
-> EXISTS <key>
-# 查看指定key的类型
-> TYPE <key>
-# 删除指定的key 	
-> DEL <key>		
-# 为指定key设置过期时间
-> EXPIRE <key> <seconds>
-# 查看key过期剩余时间，-1表示永不过期，-2表示已过期
-> TTL <key>
-```
-
-### String 操作
-
-```shell
-# 添加键值对，如果key已存在，会覆盖原value
-> SET <key> <value> [可选参数]
-```
-
-可选参数：
-
-* `NX`	只有当数据库中 `key` 不存在时，添加键值对
-* `XX`    只有当数据库中 `key` 存在时，添加键值对，与 `NX` 互斥
-* `EX <seconds>`    `key` 的过期时间，单位：秒
-* `PX <seconds>`    `key` 的过期时间，单位：毫秒，与 `EX` 互斥
-
-```shell
-# 只有当key不存在时，添加键值对
-> SETNX <key> <value>
-# 添加键值对的同时，设置过期时间
-> SETEX <key> <second> <value>
-# 设置新值同时返回旧值
-> GETSET <key> <value>
-# 查询key对应的value
-> GET <key>
-# 将value追加到原值的末尾
-> APPEND <key> <value>
-# 获得key对应value的长度
-> STRLEN <key>
-# 将key对应value的数字值加1，只能对数字值操作，如果为空，新增值为1
-> INCR <key>
-# 将key对应value的数字值减1，只能对数字值操作，如果为空，新增值为-1
-> DECR <key>
-# 增/减key对应value的数字值，自定义增量
-> INCRBY/DECRBY <key> <increment>
-# 同时设置一个或多个键值对
-> MSET <key1> <value1> <key2> <value2> ...
-# 同时获取一个或多个value
-> MGET <key1> <key2> <key3> ...
-# 同时设置一个或多个键值对，当且仅当所有给定的key都不存在
-> MSETNX <key1> <value1> <key2> <value2>
-# 获取范围内的value，索引从0开始
-> GETRANGE <key> <start> <end>
-# 从起始位置开始，用value覆写key所储存的字符串值
-> SETRANGE <key> <offset> <value>	
-```
-
-### List 操作
-
-```shell
-# 从左边/右边插入一个或多个value
-> LPUSH/RPUSH <key> <value1> <value2> ...
-# 在pivot的前面/后面插入value
-> LINSERT <key> BEFORE/AFTER <pivot> <vlaue>
-# 覆盖列表key的索引为index的value
-> LSET <key> <index> <value>
-# 从左边/右边弹出一个value，value为空时key会被清除
-> LPOP/RPOP <key>
-# 从key1列表右边弹出一个值，插入到key2列表左边
-> RPOPLPUSH <key1> <key2>
-# 从左边删除n个value（从左到右）
-> LREM <key> <n> <value>
-# 按照索引下标获得元素（从左到右），0 表示左边第一个，-1表示右边第一个（0 -1表示获取所有）
-> LRANGE<key> <start> <stop>
-# 按照索引下标获得元素（从左到右）
-> LINDEX <key> <index>
-# 获得列表长度
-> LLEN <key>
-```
-
-### Set 操作
-
-```shell
-# 将一个或多个member加入到集合key中，已经存在的member将被忽略
-> SADD <key> <member1> <member2> ...
-# 取出该集合的所有member
-> SMEMBERS <key>
-# 判断集合key是否为含有该member，有返回1，没有返回0
-> SISMEMBER <key> <member>
-# 返回该集合的member个数
-> CARD <key>
-# 删除集合中的一个或多个member
-> SREM <key> <member1> <member2> ...
-# 随机从集合弹出一个member
-> SPOP <key>
-# 随机从集合中取出n个member，这些member不会从集合中删除
-> SRANDMEMBER <key> <n>
-# 把集合中一个member从一个集合移动到另一个集合
-> SMOVE <source> <destination> <member> 
-# 返回两个集合的交集
-> SINTER <key1> <key2>
-# 返回两个集合的并集
-> SUNION <key1> <key2>
-# 返回两个集合的差集
-> SDIFF <key1> <key2>
-```
-
-### Hash 操作
-
-```shell
-# 给hash中的field赋值value
-> HSET <key> <field> <value>
-# 从hash中的field取出value
-> HGET <key> <field>
-# 批量设置hash
-> HMSET <key1> <field1> <value1> <field2> <value2> ...
-# 查看hash中field是否存在
-> HEXISTS <key> <field>
-# 查看hash中的所有field
-> HKEYS <key>
-# 查看hash中的所有value
-> HVALS <key>
-# 为hash中的field的值加上自定义增量
-> HINCRBY <key> <field> <increment>
-# 当且仅当field不存在时，设置hash中的field的value
-> HSETNX <key> <field> <value>	
-```
-
-### Zset 操作
-
-```shell
-# 将一个或多个member和对应score加入到有序集key中
-> ZADD <key> <score1> <member1> <score2> <member2> ...
-# 获取有序集key中指定范围的member,WITHSCORES表示让score和member一同返回
-> ZRANGE <key> <start> <stop> [WITHSCORES]
-# 返回有序集key中，所有score介于min和max之间（包括等于）的value。有序集成员按score值递增（从小到大）次序排列 
-> ZRANGEBYSCORE <key> <min> <max> [WITHSCORES] [LIMIT offset count]
-# 同上，排列顺序为从大到小 
-> ZREVRANGEBYSCORE <key> <max> <min> [WITHSCORES] [LIMIT offset count] 
-# 为member的score加上增量
-> ZINCRBY <key> <increment> <value>
-# 删除集合中的member
-> ZREM <key> <member> 	
-# 统计该集合score区间内的member个数
-> ZCOUNT <key> <min> <max>
-# 返回member在集合中的排名，从0开始
-> ZRANK <key> <member>	
-```
-
-## Q&A
-
-### Redis除了缓存，还可以做哪些事？
-
-1. **排行榜**，如果使用传统的关系型数据库来做，非常麻烦，而利用 Redis 的 `Zset` 数据结构能够非常方便搞定。
-2. **计算器/限速器**，利用 Redis 中原子性的自增操作，我们可以统计类似用户点赞数、用户访问数等，这类操作如果用 MySQL，频繁的读写会带来相当大的压力；限速器比较典型的使用场景是限制某个用户访问某个 API 的频率，常用的有抢购时，防止用户疯狂点击带来不必要的压力。
-3. **好友关系**，利用集合的一些命令，比如求交集、并集、差集等，可以方便搞定一些共同好友、共同爱好之类的功能。
-4. **简单消息队列**，除了 Redis 自身的发布/订阅模式，我们也可以利用 List 来实现一个队列机制，比如到货通知、邮件发送之类的需求，不需要高可靠，但是会带来非常大的 DB 压力，完全可以用 list 来完成异步解耦。
-5. **Session 共享**，以 PHP 为例，默认 Session 是保存在服务器的文件中，如果是集群服务，同一个用户过来可能落在不同机器上，这就会导致用户频繁登陆；采用 Redis 保存 Session 后，无论用户落在那台机器上都能够获取到对应的 Session 信息。
-
-### Redis不能做哪些事？
-
-1. 用 Redis 去保存用户的基本信息，虽然它能够支持持久化，但是它的持久化方案并不能保证数据绝对的落地，并且还可能带来 Redis 性能下降，因为持久化太过频繁会增大 Redis 服务的压力。
-2. 数据量太大、数据访问频率非常低的业务都不适合使用 Redis，数据太大会增加成本，访问频率太低，保存在内存中纯属浪费资源。
-
-### Redis为什么这么快？
-
-1、Redis 是一款纯内存结构，避免了磁盘 I/O 等耗时操作。
-
-2、Redis 命令处理的核心模块为单线程，减少了锁竞争，以及频繁创建线程和销毁线程的代价，减少了线程上下文切换的消耗。
-
-3、采用了 I/O 多路复用机制，大大提升了并发效率。
-
-### Redis是单线程还是多线程？
-
-Redis 基于 Reactor 模式开发了自己的网络事件处理器：这个处理器被称为文件事件处理器(*file event handler*)。文件事件处理器是单线程方式运行的，所以一般都说 Redis 是单线程模型。
-
-文件事件处理器使用 I/O 多路复用程序来同时监听多个套接字(*socket*)，并根据套接字目前执行的任务来为套接字关联不同的事件处理器。当被监听的套接字准备好执行连接应答(accept)、读取(read)、写入(write)、关闭(close)等操作时，与操作相对应的文件事件就会产生，这时文件事件处理器就会调用套接字之前关联好的事件处理器来处理这些事件。
-
- I/O 多路复用技术的使用让 Redis 不需要额外创建多余的线程来监听客户端的大量连接，降低了资源的消耗（和 NIO 中的 `Selector` 组件很像）。
-
-虽然文件事件处理器以单线程方式运行，但通过使用 I/O 多路复用程序来监听多个套接字，文件事件处理器既实现了高性能的网络通信模型，又可以很好地与 Redis 服务器中其他同样以单线程方式运行的模块进行对接，这保持了 Redis 内部单线程设计的简单性。
-
-### Redis的过期键的删除策略
-
-[Redis过期键删除策略 - 简书 (jianshu.com)](https://www.jianshu.com/p/406edc497d75)
-
-#### 保存键过期时间
-
-redisDb 结果的 expires 字典保存了数据库中所有键的过期时间，我们称这个字典为过期字典
-
-- 过期字典的键是一个指针，这个指针指向键空间的某个键对象
-- 过期字典的值是一个 long long 类型的证书，用于保存毫秒精度的 UNIX 时间戳
-
-#### 定时删除
-
- 在设置键的过期时间的同时，创建一个定时器，让定时器执行对键的删除操作。
-
-定时删除策略对内存最友好，通过使用定时器，定时删除策略可以保证键在过期时间一定会被删除，删除后就释放该键之前占用的内存。但是，定时删除策略的缺点是，它对 CPU 时间是最不友好的，在过期键比较多的情况下，删除过期键这一行为可能会占用相当一部分 CPU 时间，在内存不紧张但是 CPU 时间非常紧张的情况下，将大量 CPU 时间浪费在删除过期的策略上，而不是用在处理客户端的请求上，毫无疑问是不行的。
-
-#### 惰性删除
-
-每次取的时候先判断 expires 对象里面的键是否已经过期，如果过期，则删除键，否则，返回该键。
-
-通过定时删除的描述，你可能会想那用惰性删除就最好了，这样就不会浪费 CPU 时间，每次取数据的时候才判断，如果过期才删除它，这样就能腾出大量的 CPU 去处理客户端请求了。然而，这对内存却又是最不友好的，因为这种策略并不能保证所有键一定会访问到，比如说一些取得并不频繁的数据，就会大量堆积在内存中，如果这些内存得不到释放，可想而知后果是多么严重。
-
-#### 定期删除
-
- 每隔一段时间，程序对数据库遍历检查一遍，然后删除过期的键。
-
-定期策略每隔一段时间执行一次删除过期的操作，并通过限制删除操作执行的时长和频率来减少删除操作对 CPU 时间的影响。定期删除过期键能有效的减少过期键而造成的内存浪费，但是，这个问题点在于如何设定删除操作执行的时长和频率？设置的太频繁吧，就又跟定时删除一样，浪费大量 CPU，设置得长一点吧，这又可能出现内存大量堆积。
-
-#### Redis所使用的过期删除策略
-
-Redis实际上使用的是惰性删除和定期删除两种策略，通过配合使用，服务器可以很好的平衡 CPU 和内存。
-
-**惰性删除策略的实现**
-
-每次取数据的时候都会调用过滤函数(db.c/expireIfNeeded)，该函数主要用来判断键是否
-
-过期，如果过期，则删除键，否则，则取得对应键的值。
-
-**定期删除键的策略实现**
-
-过期键的定期删除策略由 `redis.c/activeExpireCycle` 函数实现，每当 Redis 的服务器周期性操作 `redis.c/serverCron` 函数执行时， `activeExpireCycle` 函数就会被调用，它在规定的时间内分多次遍历服务器的各个数据库，检查数据库的 expires 字典中部分键(相当于分页查询)的过期时间，并删除它。步骤如下：
-
-- 函数每次运行时，都从一定数量的数据库取出一定数量的随机键进行检查，并删除其中的过期键。
-- 全局变量 `current_db` 会记录当前 `activeExpireCycle` 函数的检查进度，并在下一次 `activeExpireCycle` 调用时，接着上一次的进度进行处理。
-- 随着 `activeExpireCycle` 函数的不断执行，服务器中的所有数据库都会被检查一遍，当到达最后时，把 `current_db` 设置为 0，然后又重新开始，如此循环下去。
-
-# Nginx
-
-## 常用命令
-
-启动 Nginx 服务：`nginx`
-
-测试配置文件是否存在语法错误：`nginx -t`
-
-查看 Nginx 版本：`nginx -v`
-
-快速停止 Nginx 服务：`nginx -s stop`
-
-正常处理完当前所有请求再停止服务：`nginx -s quit`
-
-> 正常处理完当前当快速停止服务时，worker 进程与 master 进程在收到信号后会立刻跳出循环，退出进程。而“优雅”地停止服务时，首先会关闭监听端口，停止接收新的连接，然后把当前正在处理的连接全部处理完，最后再退出进程。
-
-重新加载 Nginx 服务：`nginx -s reload`
-
-检查配置文件是否正确：`nginx -t`
-
-
-
-# Docker
-
-<img src="https://note1145141919810.oss-cn-hangzhou.aliyuncs.com/docker-architecture.png" style="zoom: 67%;" >
-
-Docker的基本组成：
-
-* 镜像(image)
-* 容器(container)
-* 仓库(repository)
-
-## 常用命令
-
-```shell
-# 启动 docker
-systemctl start docker
-# 停止 docker
-systemctl stop docker
-# 重启 docker
-systemctl restart docker
-# 查看 docker 状态
-systemctl status docker
-# 设置 docker 开机自启
-systemctl enable docker
-# 查看 docker 概要信息
-docker info
-# 查看 docker 帮助文档
-docker --help
-# 查看 docker 命令帮助文档
-docker 具体命令 --help
-```
-
-### 镜像命令
-
-```shell
-# 列出本地主机上的镜像 
-# -a 列出本地所有的镜像（含历史映像层） 
-# -q 只显示镜像ID
-docker images
-# 搜索镜像 --limit n 显示前n行 
-docker search 镜像名
-# 下载镜像 TAG 为版本号，没有 TAG 默认最新版
-docker pull 镜像名 [:TAG]
-# 查看镜像、容器、数据卷所占的空间
-docker system df
-# 删除镜像 -f 强制删除
-docker rmi 镜像名/镜像ID
-# 删除全部镜像
-docker rmi -f $(docker images -qa)
-```
-
-### 容器命令
-
-```shell
-# 新建并启动容器 
-# OPTIONS：
-# --name="容器名" 为容器指定一个名称
-# -d 后台运行容器，返回容器ID
-# -i 以交互模式运行容器
-# -t 为容器重新分配一个伪输入终端，通常与 -i 同时使用
-docker run [OPTIONS] 镜像名 [COMMAND] [ARG...] 
-# 以交互模式启动 ubuntu 容器，输入 exit 退出，容器停止；ctrl+p+q退出，容器不停止
-docker run -it ubuntu /bin/bash
-# 列出当前正在运行的容器
-# -a 列出当前所有正在运行的容器和历史上运行过的容器
-# -l 最近创建的容器
-# -n number 显示最近number个创建的容器
-# -q 只显示容器ID
-docker ps
-# 启动已停止运行的容器
-docker start 容器名/容器ID
-# 重启容器
-docker restart 容器名/容器ID
-# 停止容器
-docker stop 容器名/容器ID
-# 强制停止容器
-docker kill 容器名/容器ID
-# 删除已停止的容器 -f 强制删除
-docker rm 容器名/容器ID
-# 删除所有容器
-docker rm -f $(docker ps -qa)
-docker ps -qa | xargs docker rm
-# 查看容器运行日志
-docker logs 容器名/容器ID
-# 查看容器内部运行的进程
-docker top 容器名/容器ID
-# 查看容器内部信息
-docker inspect 容器名/容器ID
-# 在容器中打开新的终端，并且可以启动新的进程，用 exit 退出不会导致容器的停止
-docker exec -it 容器名/容器ID /bin/bash
-# 直接进入容器启动命令的终端，不会启动新的进程，用 exit 退出会导致容器的停止
-docker attach 容器名/容器ID
-# 拷贝容器文件到主机上
-docker cp 容器名/容器ID:容器内路径 目的主机路径
-# 导出容器的内容作为一个 tar 归档文件
-docker export 容器名/容器ID > 文件名.tar
-# 从 tar 包中的内容创建一个新的文件系统导入为镜像
-cat 文件名.tar | docker import - 镜像用户/镜像名:j
-```
-
-
-
-## Tips
-
-### 配置阿里云镜像加速
-
-修改配置文件 `/etc/docker/daemon.json`： 
-
-```shell
-sudo mkdir -p /etc/docker
-sudo tee /etc/docker/daemon.json <<-'EOF'
-{
-  "registry-mirrors": ["https://ojneu6lk.mirror.aliyuncs.com"]
-}
-EOF
-sudo systemctl daemon-reload
-sudo systemctl restart docker
-```
-
-### 虚悬镜像(dangling image)
-
-仓库名、标签都为 `<none>` 的镜像。
-
-# Maven
-
-## 命令
-
-```shell
-# 启动SpringBoot项目
-mvn spring-boot:run
-# 打包构建项目
-mvn package
-```
-
-
-
-## 设置国内 Maven 镜像
-
-在 `setting.xml` 文件中的 `mirrors` 标签中添加 `mirror` 子节点：
-
- ```xml
- <!-- 腾讯 -->
- <mirror>
-     <id>tencent-cloud</id>
-     <mirrorOf>central</mirrorOf>
-     <url>http://mirrors.cloud.tencent.com/nexus/repository/maven-public/</url>
- </mirror>
- <!-- 阿里 -->
- <mirror>
-     <id>aliyunmaven</id>
-     <mirrorOf>*</mirrorOf>
-     <name>阿里云公共仓库</name>
-     <url>https://maven.aliyun.com/repository/public</url>
- </mirror>
- ```
-
-## POM 
-
-### 标签 
-
-#### scope
-
-Maven 中使用 scope 指定当前包的依赖范围和依赖的传递性。
-
-| scope取值 |   有效范围   | 传递依赖 |    举例     |
-| :-------: | :----------: | :------: | :---------: |
-|  compile  |     all      |    是    | spring-core |
-| provided  | compile,test |    否    | servlet-api |
-|  runtime  | runtime,test |    是    |  JDBC驱动   |
-|   test    |     test     |    否    |    JUnit    |
-
-**compile** ：为默认依赖的有效范围。如果在定义依赖关系的时候，没有明确指定依赖有效范围的话，则默认采用该依赖有效范围。`compile` 表示被依赖项目需要参与当前项目的编译，测试，运行。打包的时候通常需要包含进去。
-
-**provided** ：`provided` 意味着打包的时候可以不用包含进去，别的设施(*Web Container*)会提供。例如：servlet-api，运行项目时，容器已经提供，就不需要 Maven 重复地引入一遍了。
-
-**runtime** ：`runntime` 表示被依赖项目无需参与项目的编译，不过后期的测试和运行周期需要其参与。例如：JDBC 驱动实现，项目代码编译只需要 JDK 提供的 JDBC 接口，只有在测试或运行项目时才需要实现上述接口的具体 JDBC 驱动。
-
-**test** ：`test` 表示依赖项目仅仅参与测试相关的工作，包括测试代码的编译，执行。例如：JUnit。
-
-## Maven 构建生命周期
-
-Maven 有以下三个标准的生命周期：
-
-1. **clean**：项目清理的处理
-2. **default(或 build)**：项目部署的处理
-3. **site**：项目站点文档创建的处理
-
-### IDEA 中 Maven Project 中的 Lifecycle
-
-#### 1、clean 清理
-
-清除上一次构建生成的所有文件，具体删除项目路径下的 `Target` 目录和目录下的所有文件，不会删除本地 Maven 仓库中已经生成的 JAR 文件。
-
-#### 2、validate 验证
-
-验证项目是否正确且所有必须信息是可用的。
-
-#### 3、compile 编译
-
-编译项目源代码，生成 `class` 文件，具体会在项目路径下生成一个 `Target` 目录，该目录中保存生成的 `class` 文件。
-
-#### 4、test 测试
-
-使用合适的单元测试框架（如 JUnit）测试编译的源代码。
-
-#### 5、package 打包
-
-将工程文件打包为指定的格式，如 JAR，WAR 等。会在 `Target` 目录下生成项目打包后的文件。
-
-#### 6、verify 检查
-
-对集成测试的结果进行检查，以保证质量达标。
-
-#### 7、install 安装
-
-安装打包的项目到本地仓库，以供其他项目使用。
-
-#### 8、depoly 部署
-
-拷贝最终的工程包到远程仓库中，以共享给其他开发人员和工程。
-
-# Git
-
-> Git 是一个分布式版本控制系统(*Distributed Version Control System*)。
->
-> Git 与其他版本控制系统的一个主要差别是对待数据的方式。Git 采用的是直接记录快照的方式，而非差异比较。大部分版本控制系统（CVS、Subversion、Perforce、Bazaar 等等）都是以文件变更列表的方式存储信息，这类系统将它们保存的信息看作是一组基本文件和每个文件随时间逐步累积的差异。
->
-> Git 把数据看作是对小型文件系统的一组快照。 每次提交更新，或在 Git 中保存项目状态时，它主要对当时的全部文件制作一个快照并保存这个快照的索引。 为了高效，如果文件没有修改，Git 不再重新存储该文件，而是只保留一个链接指向之前存储的文件。 Git 对待数据更像是一个快照流。
-
-![](D:\File\Document\编程\img\git-command.jpg)
-
-## 初始配置
-
-```shell
-# 配置用户名和邮箱，提交时需要
-$ git config --global user.name <用户名>
-$ git config --global user.email <邮箱>
-```
-
-## 获取Git仓库
-
-有两种获取 Git 仓库的方法：
-
-**1、在现有目录中初始化仓库：**进入项目目录运行 `git init` 命令，该命令将创建一个名为 `.git` 的子目录。
-
-**2、从一个服务器克隆一个现有的 Git 仓库：**`git clone <URL>` ，自定义本地仓库的名字：`git clone <URL> <仓库名>`
-
-## 基本操作
-
-**检测当前文件状态：**`git status`
-
-**将更改添加到暂存区：**`git add <文件名>`、`git add *`(添加所有文件)、`git add *.txt`(支持通配符，以 `.txt` 结尾的文件 )
-
-**提交更新：**`git commit -m <提交信息>`
-
-注意：每次准备提交前，先用 `git status` 查看文件是否都已暂存。
-
-> 一个好的提交消息：
->
-> 1、标题行：用这一行来描述和解释你的这次提交。提交的标题行描述应该尽量的清晰和尽量的一句话概括。这样就方便相关的 Git 日志查看工具显示和其他人的阅读。
->
-> 2、主体部分：可以是很少的几行，来加入更多的细节来解释提交，最好是能给出一些相关的背景或者解释这个提交能修复和解决什么问题。主体部分当然也可以有几段，但是一定要注意换行和句子不要太长。因为这样在使用 `git log` 的时候会有缩进比较好看。
-
-## Tips
-
-### GitHub设置添加SSH
-
-> #### https 和 SSH 的区别：
->
-> 1、前者可以随意克隆 GitHub 上的项目，而不管是谁的；而后者则是必须是克隆的项目的拥有者或管理员，且需要先添加 SSH key ，否则无法克隆。
->
-> 2、https URL 在 push 的时候是需要验证用户名和密码的；而 SSH 在 push 的时候，是不需要输入用户名的，如果配置 SSH key 的时候设置了密码，则需要输入密码的，否则直接是不需要输入密码的。
-
-**1、创建一个 SSH key**
-
-```shell
-$ ssh-keygen -t rsa 
-```
-
-参数含义：
-
-`-t`：指定密钥类型，默认为 `rsa`
-
-执行完成后会在 `~/.ssh` 目录下生成 `id_rsa` 和 `id_rsa.pub` 两个秘钥文件。
-
-**2、将 SSH key 添加到 GitHub 上**
-
-拷贝 `id_rsa.pub` 文件的内容：
-
-```shell
-$ clip < ~/.ssh/id_rsa.pub
-```
-
-在 GitHub 上添加 SSH key。
 
 # JavaWeb
 
@@ -5027,6 +5020,70 @@ xxx.yyy.zzz
 > 密钥 `secret` 保存在服务端，服务端会根据这个密钥进行生成 `token` 和验证。
 
 
+
+# 遇到的Bug
+
+## IDEA Tomcat 控制台输出中文乱码
+
+**解决方案**
+
+在 IDEA 的 Tomcat 配置页的 server 下，修改 VM options 为 `-Dfile.encoding=UTF-8`
+
+## 执行 SQL 时报错表名非法，在 SQL 中表名前添加库名（库名.表名）后通过
+
+**解决方案**
+
+可能是连接数据库失败，检查配置文件中数据库 URL 配置项。
+
+## JSON 前后端传值时大小写改变
+
+**问题描述**
+
+在使用 JSON 从 Java 后台向前台传值时，出现属性名中的大写变成小写的问题。经测试，形如格式为 `aBc` 的数据，经过 json 传值，变成了 `abc`，大写字母前只有一个小写字母的，会出现 JSON 强行将大写转为小写的情况。
+
+**解决方案**
+
+在返回类的相应属性加上 `@JsonProperty("{属性名}") ` 注解。
+
+## Mybatis-Plus 查询或更新报错
+
+**错误信息**
+
+```shell
+Error evaluating expression 'ew != null and ew.sqlFirst != null'.Cause : org.apache.ibatis.ognl.OgnlException : sqlFirst
+```
+
+**错误原因**
+
+`QueryChainWrapper` 不能作为查询条件构造器, 也不能作为更新条件构造器。
+
+## 报错：Cannot deserialize instance of `java.util.ArrayList` out of START_OBJECT token
+
+**错误原因**
+
+使用对象列表作为参数，JSON 转换异常。
+
+正确的格式：
+
+```json
+[
+    {
+        
+    },
+    {
+        
+    }
+    ...
+]
+```
+
+## 前端 JS 在获取后端 Long 型参数时，出现精度丢失
+
+由于 JavaScript 中 Number 类型的自身原因，并不能完全表示 Long 型的数字，在 Long 长度大于17位时会出现精度丢失的问题，超过17位的部分会变成 `0`。
+
+**解决方案**
+
+将后台的 `Long` 类型参数转为 `String` 类型传给前端。
 
 
 

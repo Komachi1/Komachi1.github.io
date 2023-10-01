@@ -395,31 +395,37 @@ vim分为三种模式，分别是**命令模式（Commend mode)**，**输入模�
 
 ### 软件安装
 
-`apt update` 更新软件包索引
-
-`apt install <package>` 安装一个新软件包
-
-`apt remove <package>` 卸载一个已安装的软件包（保留配置文档）
-
-`apt remove --purge <package>` 卸载一个已安装的软件包（删除配置文档）
-
-`apt autoremove <package>` 删除包及其依赖的软件包
-
-`apt autoremove --purge <package>` 删除包及其依赖的软件包，及其依赖的软件包的配置文件
+```shell
+# 更新软件包索引
+apt update
+# 安装一个新软件包
+apt install {package}
+# 卸载一个已安装的软件包（保留配置文档）
+apt remove {package}
+# 卸载一个已安装的软件包（删除配置文档）
+apt remove --purge {package}
+# 删除包及其依赖的软件包
+apt autoremove {package}
+# 删除包及其依赖的软件包，及其依赖的软件包的配置文件
+apt autoremove --purge {package}
+```
 
 ### 系统管理
 
 #### 防火墙
 
-`ufw status ` 查看防火墙状态
-
-`ufw enable` 开启防火墙
-
-`ufw allow 22/ssh` 制定规则，允许指定端口或服务访问
-
-`ufw delete allow 22` 删除某条规则
-
-`ufw disable` 关闭防火墙
+```shell
+# 查看防火墙状态
+ufw status
+# 开启防火墙
+ufw enable
+# 制定规则，允许指定端口或服务访问
+ufw allow 22/ssh
+# 删除某条规则
+ufw delete allow 22
+# 关闭防火墙
+ufw disable
+```
 
 ## 设置
 
@@ -437,29 +443,33 @@ Ubuntu 默认 root 用户是不能登录的，密码也是空的。
 3. 在 `**.yaml` 文件中添加以下内容，保存退出；
 
 ```yaml
-ethernets:
-  #网卡名
-  ens33:
-  	#设置静态ip地址
-    addresses: [192.168.xxx.xxx/24]
-    #设置网关地址
-    gateway4: 192.168.xxx.2
-    #设置DNS服务器地址
-    nameservers:
-      addresses: [192.168.xxx.2]
+network:
+  version: 2
+  renderer: NetworkManager
+  ethernets:
+    # 网卡名
+    ens33:
+      # 设置静态ip地址
+      addresses: [192.168.xxx.xxx/24]
+      # 设置网关地址
+      gateway4: 192.168.xxx.2
+      routes:
+        - to: default
+          via: 192.168.xxx.2
+      # 设置DNS服务器地址
+      nameservers:
+        addresses: [192.168.xxx.2]
 ```
 
 4. 使用 `netplan apply` 命令应用修改。
 
 ### 远程连接
 
-安装ssh
+安装 SSH
 
 ```shell
 apt install ssh
 ```
-
-
 
 ## 软件安装
 
@@ -469,18 +479,11 @@ apt install ssh
 apt install openjdk-8-jdk
 ```
 
-### Maven
-
-```java
-apt install maven
-```
-
 ### MySQL
 
 **1、从Ubuntu源仓库安装MySQL**
 
 ```shell
-apt update
 apt install mysql-server
 ```
 
@@ -497,7 +500,7 @@ MySQL 安装文件附带了一个名为 `mysql_secure_installation` 的脚本，
 不带参数运行这个脚本：
 
 ```shell
-mysql_secure_installation
+sudo mysql_secure_installation
 ```
 
 以下为配置项：
@@ -560,28 +563,33 @@ MySQL8.0 安装完成后 root 用户只支持 localhost 访问，若要远程访
 
 ```shell
 ufw allow 3306 # 关闭防火墙对 3306 端口的监听
-cd /etc/mysql/mysql.conf.d/
-vim mysqld.cnf # 注释掉 `bind-address` 行
+vim /etc/mysql/mysql.conf.d/mysqld.cnf # 注释掉 `bind-address` 行
 /etc/init.d/mysql restart # 重启 MySQL 服务
 mysql -u root -p
-mysql> create user 'peng'@'%'identified by '0824'; # 创建一个用户
+mysql> create user 'peng'@'%'identified by '220824'; # 创建一个用户
 mysql> grant all privileges on *.* to 'peng'@'%' with grant option; # 授权远程访问
 mysql> flush privileges; # 刷新权限
 ```
 
 ### Redis
 
-[Ubuntu安装Redis及使用_hzlarm的博客-CSDN博客_ubuntu安装redis](https://blog.csdn.net/hzlarm/article/details/99432240#01)
-
-更新服务器上的包索引：`apt update`
-
-在线安装 Redis：`apt install redis-server`
-
-安装完成后，Redis 服务器会自动启动，使用 `netstat -nlt|grep 6379` 命令查看 Redis 服务器状态。
-
-安装 Redis 服务器后，会自动地一起安装 Redis 命令行客户端程序。输入命令 `redis-cli` 启动客户端。
+在线安装 Redis：
 
 ```shell
+apt install redis-server
+```
+
+安装完成后，Redis 服务器会自动启动，查看 Redis 服务器状态：
+
+```shell
+netstat -nlt | grep 6379
+```
+
+安装 Redis 服务器后，会自动地一起安装 Redis 命令行客户端程序。
+
+```shell
+# 启动 redis 客户端
+redis-cli
 # 停止 redis
 /etc/init.d/redis-server stop
 # 启动 redis
@@ -592,17 +600,18 @@ mysql> flush privileges; # 刷新权限
 
 **允许远程访问**
 
-关闭防火墙对 6379 端口的监听：`ufw allow 6379`
-
-修改 Redis 配置文件 `redis.conf`：
-
-1、注释掉 `bind 127.0.0.1 ::1` 配置项
-
-2、将 `protected-mode` 配置项改为 `no`
+```shell
+# 关闭防火墙对 6379 端口的监听
+ufw allow 6379
+# 修改 Redis 配置文件 redis.conf：
+# 1、注释掉 bind 127.0.0.1 ::1 配置项
+# 2、将 protected-mode 配置项改为 no
+vim /etc/redis/
+# 重启 redis 服务
+sudo /etc/init.d/redis-server restart
+```
 
 ### Nginx
-
-更新服务器上的包索引：`apt update`
 
 在线安装 Nginx：`sudo apt install nginx`
 
@@ -637,7 +646,7 @@ sl
 二、黑客帝国数据字节流
 
 ```shell
-apt install cmatrix
+sudo apt install cmatrix
 cmatrix -C yellow
 ```
 

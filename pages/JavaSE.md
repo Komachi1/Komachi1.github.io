@@ -2,18 +2,20 @@
 
 ## 基本数据类型
 
-| 基本类型 | 字节 | 默认值  |
-| :------: | :--: | :-----: |
-|   byte   |  1   |    0    |
-|  short   |  2   |    0    |
-|   int    |  8   |    0    |
-|   long   |  4   |   0L    |
-|  float   |  4   |   0f    |
-|  double  |  8   |   0d    |
-|   char   |  2   | 'u0000' |
-| boolean  | 1bit |  false  |
+| 基本类型 |           字节            | 默认值  |
+| :------: | :-----------------------: | :-----: |
+|   byte   |             1             |    0    |
+|  short   |             2             |    0    |
+|   int    |             8             |    0    |
+|   long   |             4             |   0L    |
+|  float   |             4             |   0f    |
+|  double  |             8             |   0d    |
+|   char   |             2             | 'u0000' |
+| boolean  | 1，实际上只使用其中的1bit |  false  |
 
 > Java 的每种基本类型所占存储空间的大小不会像其他大多数语言那样随机器硬件架构的变化而变化。这种所占存储空间大小的不变性是 Java 程序比用其他大多数语言编写的程序更具可移植性的原因之一。
+>
+> Java 中的引用类型(如Object、String等)大小取决于具体实现和对象的内容，因此无法给出固定大小。
 
 基本类型都有对应的包装类型，基本类型与其对应的包装类型之间的赋值使用自动装箱与拆箱完成。
 
@@ -1892,6 +1894,270 @@ JVM 对类的静态变量、静态代码块执行初始化操作。
 
 > 垃圾回收(*Garbage Collection*)是 JVM 垃圾回收器提供的一种用于在空闲时间不定时回收无任何对象引用的对象占据的内存空间的一种机制。
 
+# 第三方包
+
+## lombok
+
+> lombok可以在项目编译的时候生成一些代码。
+
+#### Maven依赖
+
+```xml
+<dependency>
+    <groupId>org.projectlombok</groupId>
+    <artifactId>lombok</artifactId>
+    <version>1.18.24</version>
+</dependency>
+```
+
+#### POJO类常用注解
+
+##### **@Getter/@Setter**
+
+* 作用类上，生成所有成员变量的 `getter`/`setter` 方法。
+
+* 作用于成员变量上，生成该成员变量的 `getter`/`setter` 方法。可以设定访问权限及是否懒加载等。
+
+##### **@ToString**
+
+作用于类，覆盖默认的 `toString()` 方法，可以通过 `of` 属性限定显示某些字段，通过 `exclude` 属性排除某些字段。
+
+##### **@EqualsAndHashCode**
+
+作用于类，覆盖默认的 `equals()` 和 `hashCode()`。
+
+##### **@NonNull**
+
+作用于成员变量和参数中，标识不能为空，否则抛出空指针异常。
+
+##### **@NoArgsConstructor**
+
+生成无参构造器。
+
+##### **@RequiredArgsConstructor**
+
+生成包含 `final` 和 `@NonNull` 注解的成员变量的构造器。
+
+##### **@AllArgsConstructor**
+
+生成全参构造器。
+
+上述三个生成构造器的方法有 `staticName`，`access` 属性，`staticName` 属性设定将采用静态方法的方式生成实例，`access` 属性用于限定访问权限。
+
+##### **@Data**
+
+作用于类上，是以下注解的集合：`@ToString`，`@EqualsAndHashCode`，`@Getter `，`@Setter`，`@RequiredArgsConstructor`。
+
+##### **@Builder**
+
+作用于类上，将类转变为建造者模式。
+
+创建对象时可以这样：
+
+```java
+User user = User.builder.name("xiao").password("114514").build();
+```
+
+#### 其他重要注解
+
+##### **@Cleanup**
+
+自动关闭资源，针对实现了 `java.io.Closeable` 接口的对象有效，如：典型的IO流对象。
+
+```java
+@Cleanup InputStream in = new FileInputStream(file);
+```
+
+##### **@SneakyThrows**
+
+作用于方法上，可以对受检异常进行捕捉并抛出。
+
+##### @Slf4j
+
+项目中使用 `Slf4j` 日志时经常这样做：
+
+```java
+private static final Logger log = LoggerFactory.getLogger(UserController.class);
+```
+
+在类上使用 `@Slf4j` 后，Lombok 会提供一个名为 `log` 的 `Slf4j` 对象，在类中可以直接使用。
+
+## JOL
+
+>  JOL（Java Object Layout）是一个 Java 对象布局分析工具。它可以帮助开发人员分析 Java 对象在内存中的布局，查看对象的成员变量的大小、偏移量、对齐方式等信息。JOL 是基于 OpenJDK 的 HotSpot 虚拟机实现的，可以在程序运行时动态分析对象布局，非常适合用于 Java 性能优化和调试。
+
+### Maven依赖
+
+```xml
+ <dependency>
+     <groupId>org.openjdk.jol</groupId>
+     <artifactId>jol-core</artifactId>
+ </dependency>
+```
+
+### 使用方法
+
+```java
+// 查看对象内部信息
+System.out.println(ClassLayout.parseInstance(object).toPrintable());
+```
+
+### 示例代码
+
+```java
+Object obj = new Object();
+// 查看对象内部信息
+System.out.println(ClassLayout.parseInstance(obj).toPrintable());
+```
+
+输出结果：
+
+```shell
+java.lang.Object object internals:
+OFF  SZ   TYPE DESCRIPTION               VALUE
+  0   8        (object header: mark)     0x0000000000000005 (biasable; age: 0)
+  8   4        (object header: class)    0x00001000
+ 12   4        (object alignment gap)    
+Instance size: 16 bytes
+Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+```
+
+其中，每一行输出表示一个成员变量或对象头的信息，具体含义如下：
+
+- OFFSET：相对于 Java 对象的起始地址成员变量或对象头的偏移量；
+- SIZE：成员变量或对象头的大小，单位 Byte；
+- TYPE：成员变量或对象头的类型，包括 Java 基本类型和对象类型；
+- DESCRIPTION：成员变量或对象头的描述信息，包括成员变量的名称和类型；
+- VALUE：成员变量或对象头的值，以16进制表示。对于对象头，包括 Mark Word 和 Klass Pointer 等信息；
+- Instance size：对象实例的大小，包括对象头、实例变量和对齐填充的总大小。
+- Space losses：对象实例中的空间损失，包括对象内部的空间损失和对象外部的空间损失。
+
+需要注意的是，JOL 工具输出的信息可能会因不同的 JVM 实现和不同的 JVM 参数而有所不同，因此在使用 JOL 工具时需要注意选择合适的环境和参数。
+
+### DESCRIPTION的“alignment/padding gap”是什么意思？
+
+先看一段示例代码：
+
+```java
+public class JolTest {
+    public static void main(String[] args) {
+        Test1 test1 = new Test1();
+        Test2 test2 = new Test2();
+        System.out.println(ClassLayout.parseInstance(test1).toPrintable());
+        System.out.println(ClassLayout.parseInstance(test2).toPrintable());
+    }
+
+}
+class Test1{
+    private long p;
+
+    public Test1() {
+    }
+}
+
+class Test2{
+    private long p;
+
+    private byte p2;
+
+    private short p3;
+
+    public Test2() {
+    }
+}
+```
+
+输出结果：
+
+```shell
+JOL.Test1 object internals:
+OFF  SZ   TYPE DESCRIPTION               VALUE
+  0   8        (object header: mark)     0x0000000000000005 (biasable; age: 0)
+  8   4        (object header: class)    0xba3cce49
+ 12   4        (alignment/padding gap)   
+ 16   8   long Test1.p                   0
+Instance size: 24 bytes
+Space losses: 4 bytes internal + 0 bytes external = 4 bytes total
+
+JOL.Test2 object internals:
+OFF  SZ    TYPE DESCRIPTION               VALUE
+  0   8         (object header: mark)     0x0000000000000005 (biasable; age: 0)
+  8   4         (object header: class)    0xba3cce8a
+ 12   2   short Test2.p3                  0
+ 14   1    byte Test2.p2                  0
+ 15   1         (alignment/padding gap)   
+ 16   8    long Test2.p                   0
+Instance size: 24 bytes
+Space losses: 1 bytes internal + 0 bytes external = 1 bytes total
+```
+
+**为什么两个对象实例的大小(Instance size)都是24？**
+
+因为 `alignment/padding gap` 进行了字节的对齐填充，如果其他变量比如 `byte` 和 `short` 加起来没有超过对齐填充的大小还是算加上了对齐填充的大小。
+
+在 JOL 工具的输出结果中，每个成员变量或对象头的信息前面都有一个 DESCRIPTION 字段，它包含成员变量或对象头的名称和类型等描述信息。其中，如果成员变量或对象头的偏移量不是8的倍数，JOL 会在该字段后面显示一个 `alignment/padding gap` 字段，表示在该成员变量或对象头后面添加了多少字节的对齐填充。
+
+对齐填充是指在成员变量或对象头之间添加一些字节，以保证它们的偏移量都是8的倍数。这样做的原因是为了提高访问成员变量或对象头的效率，因为访问8字节对齐的变量比非对齐变量更快。对齐填充的大小取决于成员变量或对象头的大小和偏移量等因素，因此可能会在输出结果中出现 `alignment/padding gap` 信息。
+
+需要注意的是，对齐填充在内存中不占用任何有意义的数据，只是为了对齐而填充的字节。因此，对齐填充的大小可能会影响 Java 对象的内存占用大小，但不会影响对象的实际内容。
+
+## org.apache.lucene
+
+### RamUsageEstimator
+
+估算 Java 对象的大小（内存表示形式）。
+
+该类使用为 Hotspot 虚拟机发现的假设。如果您使用的不是基于 OpenJDK/Oracle 的 JVM，测量结果可能会略有偏差。
+
+#### Maven依赖
+
+```xml
+<dependency>
+    <groupId>org.apache.lucene</groupId>
+    <artifactId>lucene-core</artifactId>
+    <version>4.0.0</version>
+</dependency>
+```
+
+#### 示例代码
+
+```java
+public class Test {
+
+    public static void main(String[] args) throws InterruptedException {
+        Student stu = new Student();
+        String name = "keqing";
+        Student stu2 = new Student();
+        stu2.setName(name);
+        System.out.println(RamUsageEstimator.sizeOf(stu));
+        System.out.println(RamUsageEstimator.sizeOf(name));
+        System.out.println(RamUsageEstimator.sizeOf(stu2));
+    }
+}
+class Student{
+    private String name;
+
+    public Student() {
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+}
+```
+
+输出结果：
+
+```shell
+16
+48
+64
+```
+
 # 算法
 
 ## 加密算法
@@ -2369,13 +2635,31 @@ after method send
 
 ## **Java环境变量配置**
 
-1、`JAVA_HOME` 变量，点击【新建】，【变量名】为 `JAVA_HOME` ；【变量值】为 JDK 路径，例如 `C:\Program Files\Java\jdk1.8.0_121` 。
+1、`JAVA_HOME` 变量，点击【新建】，【变量名】为 `JAVA_HOME` ；【变量值】为 JDK 路径，例如 `C:\Program Files\Java\jdk1.8.0_xxx` 。
 
 2、`PATH` 变量，因为系统已经预先配置有了这个变量，只需要修改即可，点击【编辑】，进入修改界面；点击【新建】，【变量值】为 `%JAVA_HOME%\bin` ，再点击【确定】即可。
 
 3、`CLASSPATH` 变量，和 `JAVA_HOME` 变量的配置一样，点击【新建】，【变量名】为`CLASSPATH` ；【变量值】为 `.;%JAVA_HOME%\lib`。
 
-最后打开命令行窗口，输入 `java -version` ，如果显示 Java 版本信息，说明环境变量配置成功。
+打开命令行窗口，输入 `java -version` ，如果显示 Java 版本信息，说明环境变量配置成功。
+
+## JavaBean命名规范
+
+JavaBean 命名规范中要求属性以小写字母开头，且遵守驼峰命名格式，相应的 `getter/setter` 方法是 `get/set` 接上首字母大写的属性名。例如：属性名为 `userName`，其对应的 `getter/setter` 方法是 `getUserName/setUserName`。
+
+以下是一些特殊情况的做法：
+
+1、如果属性是 `boolean` 类型，如 `success`，则 `getter` 方式为 `isSuccess`；如果是 `Boolean` 包装类，则为 `getSuccess`；
+
+2、如果属性名的前两个字母是大写，如 `URL`，则方法是 `getURL()/setURL()`。
+
+以下是一些特殊情况下不规范的做法，这些做法可能导致使用 lombok 等自动代码工具时出现Bug：
+
+ 1、如果属性是 `boolean` 类型，属性名以 `isXXX` 开头，如 `isSuccess`，则 `getter` 方法并不是 `isIsSuccess`，而还是 `isSuccess`；如果是 `Boolean` 包装类，则为 `getSuccess`；
+
+2、如果属性名的第二个字母大写，如 `uName`，方法是 `getuName/setuName`；
+
+3、如果属性名首字母大写，如 `Name`，方法是 `getName/setName`。
 
 ## 正确使用equals方法
 
@@ -2403,7 +2687,6 @@ public static boolean equals(Object a, Object b) {
 Java 中 `java.util.UUID` 类实现了生成 UUID 的功能。
 
 ```java
-UUID uuid = UUID.randomUUID();
 String uuid = UUID.randomUUID().toString();
 ```
 
@@ -2485,7 +2768,7 @@ for(int i = 0;i < 10;i++){
 
 ## 快速创建集合
 
-#### 1、常规操作
+#### 方法1、常规操作
 
 ```java
 List<Integer> list = new ArrayList<>();
@@ -2493,7 +2776,7 @@ list.add(1);
 list.add(2);
 ```
 
-#### 2、Arrays工具类创建
+#### 方法2、Arrays工具类创建
 
 ```java
 //这种方式构造的 List 是固定长度的，如果调用 add 方法增加新的元素时会报异常 java.lang.UnsupportedOperationException。
@@ -2508,7 +2791,7 @@ list = new ArrayList<>(list);
 list.add(4);
 ```
 
-#### 3、匿名内部类创建
+#### 方法3、匿名内部类创建
 
 ```java
 List<Integer> list= new ArrayList() {{
@@ -2528,7 +2811,7 @@ Map<String,String> users = new HashMap<>() {{
 
 每次使用双括号初始化时，都会生成一个匿名内部类，有一个隐式的 `this` 指针指向外部类。
 
-#### 4、stream创建
+#### 方法4、stream创建
 
 > Stream 是 Java 中提供的新特性，他可以对传入流内部的元素进行筛选、排序、聚合等中间操作(*intermediate operate*)，最后由最终操作(*terminal operation*)得到前面处理的结果。
 
@@ -2536,13 +2819,13 @@ Map<String,String> users = new HashMap<>() {{
 List<Integer> list = Stream.of(1, 2, 3).collect(Collectors.toList());
 ```
 
-#### 5、JDK9 引入的Lists创建
+#### 方法5、Lists创建(JDK9 )
 
 ```java
 List<Integer> list = Lists.newArrayList(1, 2, 3);
 ```
 
-#### 6、JDK9引入 List.of (不可变)
+#### 方法6、List.of (不可变)(JDK9)
 
 ```java
 List<Integer> list = List.of(1,2,3);
@@ -2652,6 +2935,86 @@ s=list.toArray(new String[0]);//没有指定类型的话会报错
 ```
 
 由于 JVM 优化，`new String[0]` 作为 `Collection.toArray()` 方法的参数现在使用更好，`new String[0]` 就是起一个模板的作用，指定了返回数组的类型，0是为了节省空间，因为它只是为了说明返回的类型。
+
+## List去重
+
+```java
+public class ListDistinctDemo {
+
+    public static void main(String[] args) {
+        List<Integer> list = new ArrayList<Integer>() {{
+            add(1);
+            add(1);
+            add(4);
+            add(5);
+            add(1);
+            add(4);
+        }};
+        System.out.println("原集合:" + list);
+        method2(list);
+    }
+
+    /**
+     * 方法1、contains判断去重（无序）
+     * @param list
+     */
+    public static void method1(List<Integer> list) {
+        List<Integer> newList = new ArrayList<>(list.size());
+        list.forEach(i -> {
+            if (!newList.contains(i)) {
+                // 如果新集合中不存在则插入
+                newList.add(i);
+            }
+        });
+        System.out.println("去重集合:" + newList);
+    }
+
+    /**
+     * 方法2、迭代器去重（无序）
+     * @param list
+     */
+    public static void method2(List<Integer> list) {
+        Iterator<Integer> iterator = list.iterator();
+        while (iterator.hasNext()) {
+            // 获取循环的值
+            Integer item = iterator.next();
+            // 如果存在两个相同的值
+            if (list.indexOf(item) != list.lastIndexOf(item)) {
+                // 移除首个相同的值
+                iterator.remove();
+            }
+        }
+        System.out.println("去重集合:" + list);
+    }
+
+    /**
+     * 方法3、HashSet 去重（无序）
+     * @param list
+     */
+    public static void method3(List<Integer> list) {
+        HashSet<Integer> set = new HashSet<>(list);
+        System.out.println("去重集合:" + set);
+    }
+
+    /**
+     * 方法4、LinkedHashSet 去重（有序）
+     * @param list
+     */
+    public static void method4(List<Integer> list) {
+        LinkedHashSet<Integer> set = new LinkedHashSet<>(list);
+        System.out.println("去重集合:" + set);
+    }
+
+    /**
+     * 方法5、使用 Stream 去重（有序）
+     * @param list
+     */
+    public static void method5(List<Integer> list) {
+        list = list.stream().distinct().collect(Collectors.toList());
+        System.out.println("去重集合:" + list);
+    }
+}
+```
 
 ## 'java.lang.Object' to 'java.util.List/Map'
 
@@ -2784,13 +3147,12 @@ V setVa1ue(V newValue)
 
 ### 使用 Google Guava 实现
 
-使用 Guava 需要 Maven 项目引入依赖：
+使用 Guava 需要引入 Maven 依赖：
 
 ```xml
 <dependency>
     <groupId>com.google.guava</groupId>
     <artifactId>guava</artifactId>
-    <version>xxx</version>
 </dependency>
 ```
 
@@ -2799,88 +3161,6 @@ V setVa1ue(V newValue)
 String resultStr = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, "userName");
 // 下划线转驼峰
 String resultStr = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, "user_name");
-```
-
-## List 去重
-
-```java
-public class ListDistinctDemo {
-
-    public static void main(String[] args) {
-        List<Integer> list = new ArrayList<Integer>() {{
-            add(1);
-            add(3);
-            add(5);
-            add(2);
-            add(1);
-            add(3);
-            add(7);
-            add(2);
-        }};
-        System.out.println("原集合:" + list);
-        method2(list);
-    }
-
-    /**
-     * 方法一、contains判断去重（无序）
-     * @param list
-     */
-    public static void method1(List<Integer> list) {
-        List<Integer> newList = new ArrayList<>(list.size());
-        list.forEach(i -> {
-            if (!newList.contains(i)) {
-                // 如果新集合中不存在则插入
-                newList.add(i);
-            }
-        });
-        System.out.println("去重集合:" + newList);
-    }
-
-    /**
-     * 方法二、迭代器去重（无序）
-     * @param list
-     */
-    public static void method2(List<Integer> list) {
-        Iterator<Integer> iterator = list.iterator();
-        while (iterator.hasNext()) {
-            // 获取循环的值
-            Integer item = iterator.next();
-            // 如果存在两个相同的值
-            if (list.indexOf(item) != list.lastIndexOf(item)) {
-                // 移除首个相同的值
-                iterator.remove();
-            }
-        }
-        System.out.println("去重集合:" + list);
-    }
-
-    /**
-     * 方法三、HashSet 去重（无序）
-     * @param list
-     */
-    public static void method3(List<Integer> list) {
-        HashSet<Integer> set = new HashSet<>(list);
-        System.out.println("去重集合:" + set);
-    }
-
-    /**
-     * 方法四、LinkedHashSet 去重（有序）
-     * @param list
-     */
-    public static void method4(List<Integer> list) {
-        LinkedHashSet<Integer> set = new LinkedHashSet<>(list);
-        System.out.println("去重集合:" + set);
-    }
-
-    /**
-     * 使用 Stream 去重（有序）
-     * @param list
-     */
-    public static void method5(List<Integer> list) {
-        list = list.stream().distinct().collect(Collectors.toList());
-        System.out.println("去重集合:" + list);
-    }
-}
 ```
 
 ## 截取字符串
@@ -2934,29 +3214,29 @@ public interface Closeable extends AutoCloseable {
 
 ```java
 private static String getFirstLine(String path) throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(path));
-        Throwable var2 = null;
-        String var3;
-        try {
-            var3 = reader.readLine();
-        } catch (Throwable var12) {
-            var2 = var12;
-            throw var12;
-        } finally {
-            if (reader != null) {
-                if (var2 != null) {
-                    try {
-                        reader.close();
-                    } catch (Throwable var11) {
-                        var2.addSuppressed(var11);
-                    }
-                } else {
+    BufferedReader reader = new BufferedReader(new FileReader(path));
+    Throwable var2 = null;
+    String var3;
+    try {
+        var3 = reader.readLine();
+    } catch (Throwable var12) {
+        var2 = var12;
+        throw var12;
+    } finally {
+        if (reader != null) {
+            if (var2 != null) {
+                try {
                     reader.close();
+                } catch (Throwable var11) {
+                    var2.addSuppressed(var11);
                 }
+            } else {
+                reader.close();
             }
         }
-        return var3;
     }
+    return var3;
+}
 ```
 
 **在 JDK 9 的改进**
@@ -2978,7 +3258,7 @@ private static void getFirstLine(String path) throws IOException {
 ## 格式化输出
 
 ```java
-/*** 输出字符串 ***/
+// 输出字符串
 // %s表示输出字符串，也就是将后面的字符串替换模式中的%s
 System.out.printf("%s", new Integer(1212));
 // %n表示换行
@@ -2990,11 +3270,11 @@ System.out.printf("%S = %s%n", "Name", "Zhangsan");
 // 支持多个参数时，可以在%s之间插入变量编号，1$表示第一个字符串，3$表示第3个字符串
 System.out.printf("%1$s = %3$s %2$s%n", "Name", "san", "Zhang");
 
-/*** 输出boolean类型 ***/
+// 输出boolean类型
 System.out.printf("true = %b; false = ", true);
 System.out.printf("%b%n", false);
 
-/*** 输出整数类型 ***/
+// 输出整数类型
 Integer iObj = 342;
 // %d表示将整数格式化为10进制整数
 System.out.printf("%d; %d; %d%n", -500, 2343L, iObj);
@@ -3005,7 +3285,7 @@ System.out.printf("%x; %x; %x%n", -500, 2343L, iObj);
 // %X表示将整数格式化为16进制整数，并且字母变成大写形式
 System.out.printf("%X; %X; %X%n", -500, 2343L, iObj);
 
-/*** 输出浮点类型 ***/
+// 输出浮点类型
 Double dObj = 45.6d;
 // %e表示以科学计数法输出浮点数
 System.out.printf("%e; %e; %e%n", -756.403f, 7464.232641d, dObj);
@@ -3129,9 +3409,9 @@ Java 和 C++ 都是面向对象的语言，都支持封装、继承和多态，�
 
 在很多情况下，接口优先于抽象类，因为接口没有抽象类严格的类层次结构要求，可以灵活地为一个类添加行为。并且从 Java 8 开始，接口也可以有默认的方法实现，使得修改接口的成本也变的很低。
 
-## Java 存在内存泄露吗？
+## Java 存在内存泄漏吗？
 
-内存泄漏（*Memory Leak*）是指程序中已动态分配的堆内存由于某种原因程序未释放或无法释放，造成系统内存的浪费。理论上来说，Java 有GC垃圾回收机制，不再使用的对象会被GC自动回收。
+> 内存泄漏（*Memory Leak*）是指程序中已动态分配的堆内存由于某种原因程序未释放或无法释放，造成系统内存的浪费。理论上来说，Java 有GC垃圾回收机制，不再使用的对象会被GC自动回收。
 
 但是即使这样，Java 也还是存在着内存泄漏的情况，长生命周期的对象持有短生命周期对象的引用就很可能发生内存泄露，尽管短生命周期对象已经不再需要，但是因为长生命周期对象持有它的引用而导致不能被回收。
 
@@ -3234,5 +3514,5 @@ Java 提供了 `volatile` 关键字来保证可见性。
 
 ### 有序性
 
-在 Java 中，可以通过 `volatile` 关键字来保证一定的“有序性”。另外可以通过 `synchronized` 和 `Lock` 来保证有序性，`synchronized` 和 `Lock` 保证每个时刻只有一个线程执行同步代码，相当于是让线程顺序执行同步代码，自然就保证了有序性。JMM 是通过 Happens-Before 规则来保证有序性的。
+在 Java 中，可以通过 `volatile` 关键字来保证一定的“有序性”。另外可以通过 `synchronized` 和 `Lock` 来保证有序性，`synchronized` 和 `Lock` 保证每个时刻只有一个线程执行同步代码，相当于是让线程顺序执行同步代码，自然就保证了有序性。JMM 是通过 HappensBefore 规则来保证有序性的。
 
