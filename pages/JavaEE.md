@@ -1,6 +1,6 @@
 # Spring 
 
-<img src="img/spring-framework-introduce.png" alt="spring-framework-introduce" style="zoom: 67%;" />
+![spring框架结构](img/spring框架结构.png)
 
 ## IOC 
 
