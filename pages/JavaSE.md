@@ -1,3 +1,5 @@
+<img src="img/logo/java_logo.jpg" alt="Java logo" style="zoom:50%;" />
+
 # Java 基础
 
 ## 基本数据类型
@@ -1743,7 +1745,7 @@ iterator.forEachRemaining(element -> do something with element);
 
 
 
-# JDK8源码
+# 源码(基于JDK11)
 
 ## ArrayList
 
@@ -1765,10 +1767,11 @@ ArrayList<Integer> list = new ArrayList<>(Integer.MAX_VALUE);
 
 问题相关：https://stackoverflow.com/questions/31382531/why-i-cant-create-an-array-with-large-size
 
-
 # JVM
 
 > JVM(*Java Virtual Machine*：Java虚拟机)是运行Java字节码的虚拟机。
+
+
 
 ## JVM 内存模型
 
@@ -3361,32 +3364,15 @@ Java 和其它的语言不太一样。因为 Java 针对不同的平台有不同
 
 ## JVM，JDK与JRE
 
-**JVM**
+* Java 虚拟机(JVM)是运行 Java 字节码的虚拟机。JVM 有针对不同操作系统的特定实现，目的是使用相同的字节码，它们都会给出相同的结果。字节码和不同系统的 JVM 实现是 Java 语言 “一次编译，随处可以运行” 的关键所在。
 
-Java 虚拟机（JVM）是运行 Java 字节码的虚拟机。JVM 有针对不同操作系统的特定实现，目的是使用相同的字节码，它们都会给出相同的结果。字节码和不同系统的 JVM 实现是 Java 语言“一次编译，随处可以运行”的关键所在。
+  > JVM 并不是只有一种！只要满足 JVM 规范，每个公司、组织或者个人都可以开发自己的专属 JVM。 也就是说平时接触到的 `HotSpot` 仅仅是是 JVM 规范的一种实现而已。
 
-![Java程序执行流程](https://note1145141919810.oss-cn-hangzhou.aliyuncs.com/Java%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B.png)
+* JRE(Java Runtime Environment) 是 Java 运行时环境，是运行已编译 Java 程序所需的所有内容的集合，包括 Java 虚拟机(JVM)，Java 类库，Java 命令和其他的一些基础构件。但是，它不能用于创建新程序。
 
-![JVM工作方式](https://note1145141919810.oss-cn-hangzhou.aliyuncs.com/JVM%E5%B7%A5%E4%BD%9C%E6%96%B9%E5%BC%8F.png)
+* JDK(Java Development Kit) Java 的 SDK 开发工具包，包含工具包、JRE、JVM在内。
 
-**JVM 并不是只有一种！只要满足 JVM 规范，每个公司、组织或者个人都可以开发自己的专属 JVM。** 也就是说我们平时接触到的 HotSpot VM 仅仅是是 JVM 规范的一种实现而已。
-
-**JDK 与 JRE**
-
-JRE 是 Java Runtime Environment 的缩写，是 Java 运行时环境。它是运行已编译 Java 程序所需的所有内容的集合，包括 Java 虚拟机(JVM)，Java 类库，java 命令和其他的一些基础构件。但是，它不能用于创建新程序。
-
-JDK 是 Java Development Kit 缩写，它是功能齐全的 Java SDK。它拥有 JRE 所拥有的一切，还有编译器(javac)和工具（如 javadoc 和 jdb）。它能够创建和编译程序。
-
-如果只是为了运行一下 Java 程序的话，那么只需要安装 JRE 就可以了。如果需要进行一些 Java 编程方面的工作，那么你就需要安装 JDK 了。但是，这不是绝对的。有时，即使您不打算在计算机上进行任何 Java 开发，仍然需要安装 JDK。例如，如果要使用 JSP 部署 Web 应用程序，那么从技术上讲，您只是在应用程序服务器中运行 Java 程序。那你为什么需要 JDK 呢？因为应用程序服务器会将 JSP 转换为 Java servlet，并且需要使用 JDK 来编译 servlet。
-
-## **Java 和 C++ 的区别？**
-
-Java 和 C++ 都是面向对象的语言，都支持封装、继承和多态，但是，它们还是有挺多不相同的地方：
-
-- Java 不提供指针来直接访问内存，程序内存更加安全
-- Java 的类是单继承的，C++ 支持多重继承；虽然 Java 的类不可以多继承，但是接口可以多继承。
-- Java 有自动内存管理垃圾回收机制(GC)，不需要程序员手动释放无用内存。
-- C ++同时支持方法重载和操作符重载，但是 Java 只支持方法重载（操作符重载增加了复杂性，这与 Java 最初的设计思想不符）。
+如果只是为了运行一下 Java 程序的话，那么只需要安装 JRE 就可以了。如果需要进行一些 Java 编程方面的工作，那么就需要安装 JDK 了。但是，这不是绝对的。有时即使不打算在计算机上进行任何 Java 开发，仍然需要安装 JDK。例如，如果要使用 JSP 部署 Web 应用程序，那么从技术上讲，您只是在应用程序服务器中运行 Java 程序。那你为什么需要 JDK 呢？因为应用程序服务器会将 JSP 转换为 `Java servlet`，并且需要使用 JDK 来编译 `servlet`。
 
 ## **抽象类和接口的区别**
 

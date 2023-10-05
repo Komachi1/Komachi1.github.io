@@ -1,5 +1,7 @@
 # Linux
 
+<img src="img/logo/linux_logo.png" alt="linux_logo" style="zoom: 10%;" />
+
 ### **快捷键**
 
 **系统**
@@ -391,6 +393,8 @@ vim分为三种模式，分别是**命令模式（Commend mode)**，**输入模�
 
 # **Ubuntu**
 
+<img src="img/logo/ubuntu_logo.png" alt="ubuntu_logo" style="zoom: 67%;" />
+
 ## 命令
 
 ### 软件安装
@@ -613,25 +617,62 @@ sudo /etc/init.d/redis-server restart
 
 ### Nginx
 
-在线安装 Nginx：`sudo apt install nginx`
+在线安装
 
-安装完成后，Nginx服务器会自动启动，输入 `sudo systemctl status nginx` 验证。
+```shell
+sudo apt install nginx
+```
 
-配置防火墙：`sudo ufw allow 'Nginx Full'`
+安装完成后，Nginx 服务器会自动启动，验证 Nginx 服务启动：
+
+```shell
+sudo systemctl status nginx
+```
+
+配置防火墙：
+
+```shell
+sudo ufw allow 'Nginx Full'
+```
 
 访问 `http://localhost`，显示默认 Nginx 加载页面，说明安装成功。
 
-### Chrome
+### RabbitMQ
 
-1、在官网下载相应 `.deb` 安装包
-
-2、输入命令：
+RabbitMQ 需要 Erlang 环境，安装 Erlang：
 
 ```shell
-# 对安装包进行安装
-dpkg -i google-chrome-stable_current_amd64.deb
-# 对安装包进行依赖安装
-apt -f install
+sudo apt install erlang
+```
+
+接着安装 RabbitMQ：
+
+```shell
+sudo apt install rabbitmq-server
+```
+
+安装完成后，查看 RabbitMQ 运行状态：
+
+```shell
+sudo rabbitmqctl status
+```
+
+开启 RabbitMQ 的管理面板：
+
+```shell
+sudo rabbitmq-plugins enable rabbitmq_management
+```
+
+创建一个新用户：
+
+```shell
+sudo rabbitmqctl add_user {username} {password}
+```
+
+将管理员权限给予新创建用户：
+
+```shell
+sudo rabbitmqctl set_user_tags {username} administrator
 ```
 
 ### 解压
@@ -696,6 +737,8 @@ sudo systemctl restart sshd.service
 ```
 
 # VMware
+
+<img src="img/logo/vmware_logo.jpg" alt="vmware_logo" style="zoom: 33%;" />
 
 ### VMware虚拟机三种网络模式
 
