@@ -9,4 +9,4 @@
 - [Powered by docsify](https://docsify.js.org/)
 
 [GitHub](https://github.com/Komachi1/myblog)
-[Get Started](/pages/JavaSE)
+[Get Started](/JavaSE)

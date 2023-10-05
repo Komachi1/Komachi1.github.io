@@ -1,4 +1,4 @@
-<img src="img/logo/java_logo.jpg" alt="Java logo" style="zoom:50%;" />
+<img src="img/logo/java_logo.jpg" style="zoom:50%;" />
 
 # Java 基础
 
