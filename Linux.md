@@ -2,162 +2,194 @@
 
 <img src="img/logo/linux_logo.png" alt="linux_logo" style="zoom: 10%;" />
 
-### **快捷键**
+## 快捷键
 
-**系统**
+`Ctrl + u` 剪切光标到行首的所有内容
 
-**Ctrl + Alt + T**	打开终端
+`Ctrl + k` 剪切光标到行尾的所有内容
 
-**终端**
+`Ctrl + y` 粘贴
 
-**Ctrl + u**		剪切光标到行首的所有内容
+`Ctrl + c` 终止当前运行的进程
 
-**Ctrl + k**		剪切光标到行尾的所有内容
+`Ctrl + z` 挂起当前进程，可使用 `fg` 命令恢复
 
-**Ctrl + y**		粘贴
+`↑、↓` 查找执行过的命令
 
-**Ctrl + c**		终止当前运行的进程
+`!!` 执行上一条命令
 
-**Ctrl + z**		挂起当前进程，可使用 `fg` 命令恢复
+`Tab` 命令和文件名自动补全
 
-**Ctrl + Alt**	光标从Linux虚拟机切出
+`Ctrl + l` & 输入`clear` 清屏，实质上只是让终端显示页向后翻了一页
 
-**↑、↓**		查找执行过的命令
+## 常用命令
 
-**！！**		执行上一条命令
+### 文件操作
 
-**输入命令的前几个字母 + Tab** 	自动补全
+#### cd
 
-**Ctrl + l 或 输入命令 clear** 	清屏，本质上只是让终端显示页向后翻了一页
+```shell	
+# 更改当前工作目录
+cd {dir}
+# 跳转到根目录
+cd /
+# 跳转到当前用户目录
+cd ~
+# 跳转到上一级目录
+cd ..
+```
 
-### **常用命令**
+#### pwd
 
-[Ubuntu上的常用命令行 - 简书 (jianshu.com)](https://www.jianshu.com/p/cc93ac367473)
+```shell
+# 显示当前工作目录的路径
+pwd
+```
 
-#### 文件操作
+#### ls
 
-##### **cd** 	
+```shell
+# 以详细列表的形式显示当前工作目录下的所有可见文件
+ls -l
+# 显示当前工作目录下的所有文件，包括隐藏文件
+ls -a
+# 上述两种显示方式的结合
+ls -la
+```
 
-`cd <directory>`	更改当前工作目录。 		
+#### tree
 
-`cd /`	跳转到根目录
+```shell
+# 以树形结构显示指定目录下的文件结构
+tree {dir}
+```
 
-`cd ~`	跳转到当前用户目录
+#### cat
 
-`cd ..`	跳转到上一级目录
+```shell
+# 在标准输出（屏幕）上查看指定文件的内容
+cat {file}
+# 添加行号
+cat -n {file}
+```
 
-##### **pwd** 
+#### head/tail
 
-`pwd` 显示当前工作目录的路径
+```shell
+# 在标准输出（屏幕）上查看指定文件的开头N行内容（默认为10行）
+head -n {N} {file}
+# 在标准输出（屏幕）上查看指定文件的最后N行内容（默认为10行）
+tail -n {N} {file}
+```
 
-##### **ls** 
+#### more/less
 
-`ls -l`	以详细列表的形式显示当前工作目录下的所有可见文件
+```shell
+# 在标准输出（屏幕）上分页显示文件内容
+more {file}
+# 按页或按窗口打印文件内容
+less {file}
+```
 
-`ls -a`	显示当前工作目录下的所有文件，包括隐藏文件
+在 `more/less` 环境中也可使用一些基本命令：
 
-`ls -la`	以详细列表的形式显示当前工作目录下的所有文件，包括隐藏文件
+* `<space> / <Enter>` 翻页
 
-##### **tree**
+* `b` 返回上一页
 
-`tree <dir>` 以树形结构显示指定目录下的文件结构
+* `q` 退出
 
-##### **cat**
+#### mkdir
 
-`cat <file>`	在标准输出（屏幕）上查看指定文件的内容
-
-`cat -n <file> ` 	添加行号
-
-##### **head**
-
-`head -n N <file>` 	在标准输出（屏幕）上查看指定文件的开头N行内容（默认为10行）
-
-##### **tail**
-
-`tail -n N <file>` 在标准输出（屏幕）上查看指定文件的最后N行内容（默认为10行）
-
-##### **more**
-
-`more <file>` 在标准输出（屏幕）上分页显示文件内容，在 `more` 环境中也可使用一些基本命令：
-
-* `<space> / <Enter>`	翻页
-
-* `b`	返回上一页
-
-* `q`	退出
-
-##### **less**
-
-`less <file> ` 按页或按窗口打印文件内容，在 `less` 环境中可以使用一些基本命令，命令同 `more`
-
-##### **mkdir**	
-
-`mkdir <dir>`	创建一个新目录
-
-* `-p`	创建多层目录
-
-##### **touch**
-
-`touch <file>` 修改文件的访问时间和修改时间，若当前目录下没有同名文本，则创建一个新文本
-
-##### **grep**
-
-`grep "<string>" <file>` 在指定文件file中搜寻指定字符串string
-
-`grep -i "<string>" <file>` 在指定文件file中搜寻指定字符串string（忽略大小写）
-
-`grep -r "<string>" <dir>` 在指定目录下的所有文件中递归搜寻指定的字符串
-
-##### **cp**
-
-`cp <source-file> <destination-file>`	将source文件复制为destination文件
-
-`cp -r <source-folder> <destination-folder>`	将source文件夹复制到destination文件夹处
-
-##### **mv**
-
-`mv <source> <destination>`	将指定source文件或文件夹移至destination处，也可用于将source文件（夹）重命名为destination。
-
-##### **rm**
-
-`rm <file>`	删除指定的文件
-
-`rm -r <dir>`	递归删除指定目录下的所有子目录和文件
-
-`rm -f <file>`	强制删除
-
-##### **rmdir**
-
-`rmdir <dir>`	删除指定目录
-
-##### **echo**
-
-`echo <content>` 在标准输出（屏幕）上打印content
-
-`echo <content> > <file>` 以覆盖文本的方式写入文件
-
-`echo <content> >> <file>` 以在文本末尾追加的方式写入
-
-##### **history**
-
-`history` 显示之前执行过的命令
-
-##### **tar**
-
-`tar -cvf <archive-file.tar> <files>` 将指定的files添加进.tar压缩包
-
-`tar -xvf <archive-file.tar>` 提取指定压缩文件的内容到当前工作目录
-
-`tar -tvf <archive-file.tar>` 查看指定压缩包内的内容
-
-##### **find**
-
-[Linux find 命令详解 - 简书 (jianshu.com)](https://www.jianshu.com/p/ea8cc2248022)
+```shell	
+# 创建一个新目录
+mkdir {dir}
+# 创建多级目录
+mkdir -p {dir1/dir2/dir3 ...} 
+```
+
+#### touch
+
+```shell
+# 修改文件的访问时间和修改时间，若当前目录下没有同名文本，则创建一个新文本
+touch {file}
+```
+
+#### grep
+
+```shell
+# 在指定文件file中搜寻指定字符串string
+grep "{string}" {file}
+# 忽略大小写
+grep -i "{string}" {file}
+# 在指定目录下的所有文件中递归搜寻指定的字符串
+grep -r "{string}" {dir}
+```
+
+#### cp
+
+```shell
+# 复制source文件并将副本重命名为destination文件
+cp {source_file} {destination_file}
+# 复制文件夹
+cp -r {source-folder} {destination-folder}
+```
+
+#### mv
+
+```shell
+# 将指定source文件或文件夹移至destination处，也可用于将source文件（夹）重命名为destination
+mv {source} {destination}
+```
+
+#### rm/rmdir
+
+```shell
+# 删除指定的文件
+rm {file}
+# 递归删除指定目录下的所有子目录和文件
+rm -r {dir}
+# 强制删除
+rm -f {file}
+# 删除指定目录
+rmdir {dir}
+```
+
+#### echo
+
+```shell
+# 在标准输出（屏幕）上打印content
+echo {content}
+# 以覆盖文本的方式写入文件
+echo {content} > {file}
+# 以在文本末尾追加的方式写入
+echo {content} >> {file}
+```
+
+#### history
+
+```shell
+# 显示之前执行过的命令
+history
+```
+
+#### tar
+
+```shell
+# 将指定的files添加进.tar压缩包
+tar -cvf {archive-file.tar} {files}
+# 提取指定压缩文件的内容到当前工作目录
+tar -xvf {archive-file.tar}
+# 查看指定压缩包内的内容
+tar -tvf {archive-file.tar}
+```
+
+#### find
 
 在指定目录下查找文件。
 
 ```shell
-$find [paths] [expression] [actions]
+find {paths} {expression} {actions}
 ```
 
 `expression` ：搜索条件
@@ -218,178 +250,160 @@ find /usr -type f ! -name '*.txt'
 
 * `-delete` 删除搜索到的文件和目录
 
-#### 用户及权限管理
+### 用户及权限管理
 
-##### **su**
+```shell
+# 切换当前用户
+su {user}
+# 临时获取root用户权限，执行命令
+sudo {command}
+# 查询当前用户的用户名
+whoami
+# 更改当前用户的密码
+passwd
 
-`su <user>` 切换当前用户，若当前用户为 `root` 用户，可任意切换到其他用户。
+```
 
-##### **sudo**
-
-`sudo <command>` 临时获取 `root` 用户权限，执行命令。
-
-##### **whoami**
-
-`whoami` 查询当前登录用户的用户名。
-
-##### **passwd**
-
-`passwd` 更改当前登录用户的密码。
-
-##### **chmod**
+#### chmod
 
 更改用户对文件的权限。
 
 > 文本权限
 >
-> 读权限（r） 对文本而言，具有读取文本内容的权限；对目录来说，具有浏览目录的权限。
-> 写权限（w） 对文本而言，具有新增、修改文本内容的权限；对目录来说，具有删除、移动目录内文本的权限。
-> 可执行权限（x） 对文本而言，具有执行文本的权限；对目录了来说该用户具有进入目录的权限。
+> * 读权限 (r) 对文本而言，具有读取文本内容的权限；对目录来说，具有浏览目录的权限。
+> * 写权限 (w) 对文本而言，具有新增、修改文本内容的权限；对目录来说，具有删除、移动目录内文本的权限。
+> * 可执行权限 (x) 对文本而言，具有执行文本的权限；对目录了来说该用户具有进入目录的权限。
 
 ```shell
-chmod [mode] [filename]
+chmod {mode} {file}
 ```
 
 `mode` ：权限设定字串，格式为`[ugoa][[+-=][rwx]]`
 
-* u 表示该文件的拥有者，g 表示与该文件的拥有者属于同一个用户组（group），o 表示其他以外的人，a表示三者皆是。
-* \+ 表示增加权限，- 表示取消权限，= 表示唯一设定权限
-* r 表示可读取，w 表示可写入，x 表示可执行
+* `u` 表示该文件的拥有者，`g` 表示与该文件的拥有者属于同一个用户组(group)，`o` 表示其他以外的人，`a` 表示三者皆是。
+* `+` 表示增加权限，`-` 表示取消权限，`=` 表示唯一设定权限。
+* `r` 表示可读取，`w` 表示可写入，`x` 表示可执行。
 
 #### 进程管理
 
-##### **ps** 
+```shell
+# 显示当前系统中运行进程的信息
+ps
+# 过滤出指定PID的进程
+ps -ef | grep {PID}
+# 实时显示进程状态
+top
+# 终止指定PID的进程
+kill {PID}
+# 强制终止
+kill -9 {PID}
+```
 
-`ps` 显示当前系统中运行进程的信息
+## vim
 
-`ps -ef | grep xxx` 过滤出需要的进程
+> vim 分为三种模式，分别是命令模式(Commend mode)，输入模式(Insert mode)和底线命令模式(Last line mode)。
 
-##### **top**
+### 命令模式
 
-`top` 实时显示进程状态
+启动 vim 时会直接进入命令模式，此时键盘输入会被 vim 识别为命令，而非输入字符。
 
-##### **kill**
+`i,I`：切换到输入模式，`i` 为从目前光标所在处输入，I 为在目前所在行的第一个非空格符处开始输入
 
-`kill <pid>` 终止指定pid的进程
+`a,A`：切换到输入模式，`a` 为从目前光标所在的下一个字符处开始输入，`A` 为从光标所在行的最后一个字符处开始输入
 
-### vim
+`o,O`：切换到输入模式，`o` 为在目前光标所在的下一行处输入新的一行，`O` 为在目前光标所在的上一行处输入新的一行
 
-https://www.runoob.com/linux/linux-vim.html
+`r,R`：切换到取代模式(Replace mode)，`r` 只会取代光标所在的那个字符一次，`R` 会一直取代光标所在的文字，直到按下 `ESC` 退出
 
-vim分为三种模式，分别是**命令模式（Commend mode)**，**输入模式(Insert mode)**和**底线命令模式（Last line mode)**。
+`:` 切换到底线命令模式
 
-#### **命令模式**
+#### 移动光标
 
-启动vim时会直接进入命令模式，此时敲击键盘会被vim识别为命令，而非输入字符。
+`h,j,k,l` 光标向左，下，上，右移动一个字符，如果想要进行多次移动的话，如向下移动 30 行，可以使用 `30j` 或 `30↓` 的组合按键
 
- **i，I**	切换到输入模式，i 为从目前光标所在处输入，I 为在目前所在行的第一个非空格符处开始输入
+`Ctrl + f` 屏幕向下移动一页，相当于 `Page Down`
 
-**a，A**	切换到输入模式，a 为从目前光标所在的下一个字符处开始输入， A 为从光标所在行的最后一个字符处开始输入
+`Ctrl + b` 屏幕向上移动一页，相当于 `Page Up`
 
-**o，O**	切换到输入模式，o 为在目前光标所在的下一行处输入新的一行； O 为在目前光标所在的上一行处输入新的一行
+`+/-` 光标移动到非空格的下一行/上一行
 
-**r，R**	切换到取代模式(Replace mode)，r 只会取代光标所在的那一个字符一次，R会一直取代光标所在的文字，直到按下 ESC 退出
+`n + space` `n` 表示数字，输入数字再按下空格光标会向右移动 `n` 个字符
 
-**:**	切换到底线命令模式
+`0` 光标移动到这一行的首字符处，相当于 `Home`
 
-**移动光标**
+`$` 光标移动到这一行的末字符处，相当于 `End`
 
-**h，j，k，l**	光标向左，下，上，右移动一个字符，如果想要进行多次移动的话，如向下移动30行，可以使用'30j'或'30↓'的组合按键
+`G` 移动到这个文本的最后一行
 
-**<Ctrl\> + f**	屏幕向下移动一页，相当于\<Page Down>
+`nG` 移动到这个文本的第 `n` 行
 
-**<Ctrl\> + b**	屏幕向上移动一页，相当于\<Page Up>
+`gg` 移动到这个文本的第一行
 
-**+/-**	光标移动到非空格的下一行/上一行
+`n + Enter` 光标向下移动 `n` 行
 
-**n\<space>**	n表示数字，输入数字再按下空格光标会向右移动n个字符
+#### 搜索替换
 
-**0**	光标移动到这一行的首字符处，相当于\<Home>
+`/word` 向光标下寻找一个名称为 `word` 的字符串
 
-**$**	光标移动到这一行的末字符处，相当于\<End>
+`?word` 向光标上寻找一个名称为 `word` 的字符串
 
-**G**	移动到这个文本的最后一行
+`n` 重复前一个搜索动作，如 `/word` 后，按下 `n` 会继续向下寻找一个名称为 `word` 的字符串
 
-**nG**	移动到这个文本的第n行
+`N` 与 `n` 相反，反向进行前一个搜索动作，如 `/word` 后，按下 `N` 会向上寻找一个名称为 `word` 的字符串
 
-**gg**	移动到这个文本的第一行
+#### 删除、复制与粘贴
 
-**n\<Enter>**	光标向下移动n行
+`x,X` 向后，前删除一个字符，相当于 `Del，Backspace`
 
-**搜索替换**
+`nx` `n` 为数字，连续向后删除 `n` 个字符
 
-**/word**	向光标下寻找一个名称为word的字符串
+`dd` 删除光标所在的那一整行
 
-**?word**	向光标上寻找一个名称为word的字符串
+`ndd` 删除光标所在的向下 `n` 行
 
-**n**	重复前一个搜索动作，如/word后，按下n会继续向下寻找一个名称为word的字符串。
+`ncj` `n` 为数字，向下删除 `n` 行
 
-**N**	与n相反，反向进行前一个搜索动作，如/word后，按下N会向上寻找一个名称为word的字符串
+`yy` 复制光标所在的那一行
 
-**:n1,n2s/word1/word2/g**	n1 与 n2 为数字。在第 n1 与 n2 行之间寻找 word1 这个字符串，并将该字符串取代为 word2 
+`nyy` `n` 为数字，复制光标所在向下 `n` 行
 
-**:1,$s/word1/word2/g** 或 **:%s/word1/word2/g**	从第一行到最后一行寻找 word1 字符串，并将该字符串取代为 word2
+`p, P` `p` 为将复制的数据粘贴在光标下一行，`P` 则为粘贴在光标上一行
 
-**删除、复制与粘贴**
+`J` 将光标所在行与下一行合为一行
 
-**x，X**	向后，前删除一个字符，相当于 Del，Backspace
+`u` 撤销
 
-**nx**	n 为数字，连续向后删除 n 个字符
+`Ctrl + r` 恢复撤销
 
-**dd**	删除光标所在的那一整行
+`.` 重复前一个动作
 
-**ndd**	删除光标所在的向下 n 行
+### 底线命令模式
 
-**ncj**	n,为数字，向下删除 n 行
+`q` 退出程序
 
-**yy**	 复制光标所在的那一行
+`q!` 不保存对文件的修改强制退出程序
 
-**nyy**	n 为数字，复制光标所在向下 n 行
+`w` 写入文件
 
-**p, P**	p 为将复制的数据粘贴在光标下一行，P 则为粘贴在光标上一行
+`w!` 若文件属性为只读，强制写入文件
 
-**J**	将光标所在行与下一行合为一行
+`wq` 写入文件后退出，`wq!` 为强制写入后退出
 
-**u**	撤销
+`ZZ` 相当于 `wq`
 
-**Ctrl + r**	恢复撤销
+`ZQ` 相当于 `q!`
 
-**.**	重复前一个动作
+`w {file}` 将编辑的数据储存为名为 `file` 的文件
 
-#### **输入模式**
+`n1,n2 w {filename}` 将第 `n1` 行到第 `n2` 行的内容储存为名为 `filename` 的文件
 
-**\<Home> / \<End>**	移动光标到行首/行尾
+`r {filename}` 将 `filename` 文件的内容追加到光标所在行后面
 
-**\<Page Up> / \<Page Down>**	上下翻页
+`!{command}` 暂时离开 vim 到指令行模式下执行 `command` 命令的显示结果
 
-**\<Insert>**	切换光标为输入/替换模式
+`set nu` 显示行号
 
-#### **底线命令模式**
-
-**q**	退出程序
-
-**q!**	不保存对文件的修改强制退出程序
-
-**w**	写入文件
-
-**w!**	若文件属性为[只读]，强制写入文件
-
-**wq**	写入文件后退出，wq! 为强制写入后退出
-
-**ZZ**	相当于wq
-
-**ZQ**	相当于q!
-
-**w [filename]** 	将编辑的数据储存为名为filename的文件
-
-**n1,n2 w [filename]**	将第n1行到第n2行的内容储存为名为 filename的文件
-**r [filename]**	将 filename文件的内容追加到光标所在行后面
-
-**![command]**	 暂时离开 vi 到指令行模式下执行command命令的显示结果
-
-**set nu**	显示行号
-
-**set nonu**	与 set nu 相反，取消行号
+`set nonu` 与 `set nu` 相反，取消行号
 
 # **Ubuntu**
 
@@ -469,9 +483,8 @@ network:
 
 ### 远程连接
 
-安装 SSH
-
 ```shell
+# 安装 SSH
 apt install ssh
 ```
 
@@ -577,7 +590,7 @@ mysql> flush privileges; # 刷新权限
 
 ### Redis
 
-在线安装 Redis：
+在线安装
 
 ```shell
 apt install redis-server
@@ -602,7 +615,7 @@ redis-cli
 /etc/init.d/redis-server restart
 ```
 
-**允许远程访问**
+设置允许远程访问：
 
 ```shell
 # 关闭防火墙对 6379 端口的监听
@@ -610,7 +623,7 @@ ufw allow 6379
 # 修改 Redis 配置文件 redis.conf：
 # 1、注释掉 bind 127.0.0.1 ::1 配置项
 # 2、将 protected-mode 配置项改为 no
-vim /etc/redis/
+sudo vim /etc/redis/redis.conf
 # 重启 redis 服务
 sudo /etc/init.d/redis-server restart
 ```
@@ -623,7 +636,7 @@ sudo /etc/init.d/redis-server restart
 sudo apt install nginx
 ```
 
-安装完成后，Nginx 服务器会自动启动，验证 Nginx 服务启动：
+安装完成后，Nginx 服务器会自动启动，验证 Nginx 服务已启动：
 
 ```shell
 sudo systemctl status nginx
@@ -645,7 +658,7 @@ RabbitMQ 需要 Erlang 环境，安装 Erlang：
 sudo apt install erlang
 ```
 
-接着安装 RabbitMQ：
+在线安装 RabbitMQ：
 
 ```shell
 sudo apt install rabbitmq-server
@@ -695,13 +708,13 @@ cmatrix -C yellow
 
 ### 程序前后台切换
 
-在Linux终端运行命令的时候，在命令末尾加上 & 符号，就可以让程序在后台运行
+在 `Linux` 终端运行命令的时候，在命令末尾加上 `&` 符号，就可以让程序在后台运行。
 
 ```shell
 ./{程序名} &
 ```
 
-如果程序正在前台运行，可以使用 Ctrl+z 选项把程序暂停：
+如果程序正在前台运行，可以使用 `Ctrl+z` 选项把程序暂停：
 
 ```shell
 # 查看所有运行的程序
@@ -740,13 +753,13 @@ sudo systemctl restart sshd.service
 
 <img src="img/logo/vmware_logo.jpg" alt="vmware_logo" style="zoom: 33%;" />
 
-### VMware虚拟机三种网络模式
+## VMware虚拟机三种网络模式
 
 VMware 提供了三种网络工作模式，它们分别是：**Bridged（桥接模式）**、**NAT（网络地址转换模式）**、**Host-Only（仅主机模式）**。
 打开 VMware 虚拟机，可以在选项栏的 `编辑` 下的 `虚拟网络编辑器` 中看到 `VMnet0（桥接模式）`、`VMnet1（仅主机模式）`、`VMnet8（NAT模式）`，`VMnet0` 表示的是用于桥接模式下的虚拟交换机；`VMnet1` 表示的是用于仅主机模式下的虚拟交换机；`VMnet8` 表示的是用于 NAT 模式下的虚拟交换机。
 同时，在主机上对应的有 `VMware Network Adapter VMnet1` 和 `VMware Network Adapter VMnet8` 两块虚拟网卡，它们分别作用于仅主机模式与 NAT 模式下。在 `网络连接` 中我们可以看到这两块虚拟网卡，如果将这两块卸载了，可以在 VMware 的 `编辑` 下的 `虚拟网络编辑器` 中点击 `还原默认设置`，可重新将虚拟网卡还原。
 
-#### 一、Bridged（桥接模式）
+### 一、Bridged（桥接模式）
 
 <img src="https://note1145141919810.oss-cn-hangzhou.aliyuncs.com/VMware%E6%A1%A5%E6%8E%A5%E6%A8%A1%E5%BC%8F.png" style="zoom: 50%;" />
 
@@ -756,7 +769,7 @@ VMware 桥接模式，也就是将虚拟机的虚拟网络适配器与主机的�
 
 > 桥接模式下无需虚拟网卡，因为虚拟机直接使用物理机上的物理网卡 IP 作为网关；但虚拟机的网段必须和物理机保持一致。
 
-#### 二、NAT（地址转换模式）
+### 二、NAT（地址转换模式）
 
 <img src="https://note1145141919810.oss-cn-hangzhou.aliyuncs.com/VMwareNAT%E6%A8%A1%E5%BC%8F.png" style="zoom: 50%;" />
 
@@ -764,7 +777,7 @@ NAT(*Network Address Translation*) 意即网络地址转换。NAT 模式也是 V
 
 > 在一台主机上只允许有一个 NAT 模式的虚拟网络。因此，同一台主机上的多个采用 NAT 模式网络连接的虚拟机也是可以相互访问的。
 
-#### 三、Host-Only（仅主机模式）
+### 三、Host-Only（仅主机模式）
 
 **仅主机模式，是一种比 NAT 模式更加封闭的的网络连接模式，它将创建完全包含在主机中的专用网络**。仅主机模式的虚拟网络适配器仅对主机可见，并在虚拟机和主机系统之间提供网络连接。相对于 NAT 模式而言，仅主机模式不具备 NAT 功能，**因此在默认情况下，使用仅主机模式网络连接的虚拟机无法连接到 Internet**（在主机上安装合适的路由或代理软件，或者在 Windows 系统的主机上使用 Internet 连接共享功能，仍然可以让虚拟机连接到 Internet 或其他网络）。
 
