@@ -2217,9 +2217,33 @@ AspectJ 是更强的 AOP 框架，是实际意义的 AOP 标准；Spring 小组�
 
 ![AspectJ织入到Java代码的过程](img/AspectJ织入到Java代码的过程.png)
 
+##### Spring AOP 和 AspectJ 之间的区别
 
+AspectJ 可以做 Spring AOP 干不了的事情，它是 AOP 编程的完全解决方案，Spring AOP 则致力于解决企业级开发中最普遍的 AOP（方法织入）。
 
-#### AspectJ注解方式
+下表总结了 Spring AOP 和 AspectJ 之间的区别：
+
+|                    Spring AOP                    |                           AspectJ                            |
+| :----------------------------------------------: | :----------------------------------------------------------: |
+|                 在纯 Java 中实现                 |                 使用 Java 编程语言的扩展实现                 |
+|               不需要单独的编译过程               |         除非设置 LTW，否则需要 AspectJ 编译器 (ajc)          |
+|                只能使用运行时织入                |       运行时织入不可用，支持编译时、编译后和加载时织入       |
+|            功能不强-仅支持方法级编织             | 更强大 - 可以编织字段、方法、构造函数、静态初始值设定项、最终类/方法等 |
+|      只能在由 Spring 容器管理的 Bean 上实现      |                    可以在所有域对象上实现                    |
+|               仅支持方法执行切入点               |                        支持所有切入点                        |
+| 代理是由目标对象创建的, 并且切面应用在这些代理上 | 在执行应用程序之前 (在运行时) 前, 各方面直接在代码中进行织入 |
+|                比 AspectJ 慢多了                 |                          更好的性能                          |
+|                  易于学习和应用                  |                 相对于 Spring AOP 来说更复杂                 |
+
+以下 Spring 官方的回答：（总结来说就是 Spring AOP 更易用，AspectJ 更强大）。
+
+- Spring AOP 比完全使用 AspectJ 更加简单， 因为它不需要引入 AspectJ 的编译器／织入器到你开发和构建过程中。 如果仅仅需要在 Spring Bean 上通知执行操作，那么 Spring AOP 是合适的选择；
+- 如果需要通知 domain 对象或其它没有在 Spring 容器中管理的任意对象，那么需要使用 AspectJ；
+- 如果想通知除了简单的方法执行之外的连接点（如：调用连接点、字段 `get` 或 `set` 的连接点等等）， 也需要使用 AspectJ。
+
+当使用 AspectJ 时，可以选择使用 AspectJ 语言（也称为“代码风格”）或 `@AspectJ` 注解风格。 如果切面在设计中扮演一个很大的角色，并且能在 Eclipse 等 IDE 中使用 AspectJ Development Tools (AJDT)， 那么首选 AspectJ 语言：因为该语言专门被设计用来编写切面，所以会更清晰、更简单。如果没有使用 Eclipse 等 IDE，或者在应用中只有很少的切面并没有作为一个主要的角色，或许应该考虑使用`@AspectJ` 风格 并在 IDE 中附加一个普通的 Java 编辑器，并且在构建脚本中增加切面织入（链接）的段落。
+
+#### AspectJ 注解方式
 
 Spring 使用了AspectJ 框架为 AOP 的实现提供了一套注解：
 
@@ -2233,86 +2257,6 @@ Spring 使用了AspectJ 框架为 AOP 的实现提供了一套注解：
 | @AfterThrowing  | 用于定义异常通知来处理程序中未处理的异常，相当于 `ThrowAdvice`。在使用时可指定 `pointcut/value` 和`throwing` 属性。其中 `pointcut/value` 用于指定切入点表达式，而 `throwing` 属性值用于指定一个形参名来表示`Advice` 方法中可定义与此同名的形参，该形参可用于访问目标方法抛出的异常。 |
 |     @After      | 用于定义最终 `final` 通知，不管是否异常，该通知都会执行。使用时需要指定一个 `value` 属性，该属性用于指定该通知被植入的切入点。 |
 | @DeclareParents | 用于定义引介通知，相当于 `IntroductionInterceptor` (不要求掌握)。 |
-
-#### 切入点（pointcut）的申明规则
-
-Spring AOP 用户可能会经常使用 `execution` 切入点指示符。执行表达式的格式如下：
-
-```
-execution（modifiers-pattern? ret-type-pattern declaring-type-pattern? name-pattern（param-pattern） throws-pattern?）
-```
-
-<img src="img/切入点的申明规则.png" alt="切入点的申明规则" style="zoom: 80%;" />
-
-* `ret-type-pattern` 返回类型模式， `name-pattern` 名字模式和 `param-pattern` 参数模式是必选的， 其它部分都是可选的。返回类型模式决定了方法的返回类型必须依次匹配一个连接点。 使用的最频繁的返回类型模式是 `*`，它代表了匹配任意的返回类型。
-
-* `declaring-type-pattern`， 一个全限定的类型名将只会匹配返回给定类型的方法。
-
-* `name-pattern` 名字模式匹配的是方法名。 可以使用 `*` 通配符作为所有或者部分命名模式。
-
-* `param-pattern` 参数模式稍微有点复杂：`()` 匹配了一个不接受任何参数的方法， 而 `(..)` 匹配了一个接受任意数量参数的方法（零或者更多）。 模式 `(*)` 匹配了一个接受一个任何类型的参数的方法。 模式 `(*,String)`匹配了一个接受两个参数的方法，第一个可以是任意类型， 第二个则必须是 `String` 类型。
-
-下面给出一些通用切入点表达式的例子：
-
-```java
-// 任意公共方法的执行：
-execution（public * *（..））
-
-// 任何一个名字以“set”开始的方法的执行：
-execution（* set*（..））
-
-// AccountService接口定义的任意方法的执行：
-execution（* com.xyz.service.AccountService.*（..））
-
-// 在service包中定义的任意方法的执行：
-execution（* com.xyz.service.*.*（..））
-
-// 在service包或其子包中定义的任意方法的执行：
-execution（* com.xyz.service..*.*（..））
-
-// 在service包中的任意连接点（在Spring AOP中只是方法执行）：
-within（com.xyz.service.*）
-
-// 在service包或其子包中的任意连接点（在Spring AOP中只是方法执行）：
-within（com.xyz.service..*）
-
-// 实现了AccountService接口的代理对象的任意连接点 （在Spring AOP中只是方法执行）：
-this（com.xyz.service.AccountService）// 'this'在绑定表单中更加常用
-
-// 实现AccountService接口的目标对象的任意连接点 （在Spring AOP中只是方法执行）：
-target（com.xyz.service.AccountService） // 'target'在绑定表单中更加常用
-
-// 任何一个只接受一个参数，并且运行时所传入的参数是Serializable 接口的连接点（在Spring AOP中只是方法执行）
-args（java.io.Serializable） // 'args'在绑定表单中更加常用; 请注意在例子中给出的切入点不同于 execution(* *(java.io.Serializable))： args版本只有在动态运行时候传入参数是Serializable时才匹配，而execution版本在方法签名中声明只有一个 Serializable类型的参数时候匹配。
-
-// 目标对象中有一个 @Transactional 注解的任意连接点 （在Spring AOP中只是方法执行）
-@target（org.springframework.transaction.annotation.Transactional）// '@target'在绑定表单中更加常用
-
-// 任何一个目标对象声明的类型有一个 @Transactional 注解的连接点 （在Spring AOP中只是方法执行）：
-@within（org.springframework.transaction.annotation.Transactional） // '@within'在绑定表单中更加常用
-
-// 任何一个执行的方法有一个 @Transactional 注解的连接点 （在Spring AOP中只是方法执行）
-@annotation（org.springframework.transaction.annotation.Transactional） // '@annotation'在绑定表单中更加常用
-
-// 任何一个只接受一个参数，并且运行时所传入的参数类型具有@Classified 注解的连接点（在Spring AOP中只是方法执行）
-@args（com.xyz.security.Classified） // '@args'在绑定表单中更加常用
-
-// 任何一个在名为'tradeService'的Spring bean之上的连接点 （在Spring AOP中只是方法执行）
-bean（tradeService）
-
-// 任何一个在名字匹配通配符表达式'*Service'的Spring bean之上的连接点 （在Spring AOP中只是方法执行）
-bean（*Service）
-```
-
-此外 Spring 支持如下三个逻辑运算符来组合切入点表达式：
-
-```
-&&：要求连接点同时匹配两个切入点表达式
-||：要求连接点匹配任意个切入点表达式
-!:：要求连接点不匹配指定的切入点表达式
-```
-
-
 
 #### SpringAOP配置方式
 
@@ -2985,7 +2929,7 @@ public class FieldValueTestBean {
 
 ## Spring常见注解
 
-### 1、Bean相关
+### Bean相关
 
 > Spring 中的 Bean 就类似是定义的一个组件，而这个组件的作用就是实现某个功能的，这里所定义的 Bean 就相当于给了一个更为简便的方法来调用这个组件去实现要完成的功能。
 >
@@ -3182,7 +3126,7 @@ public class Test{
 }
 ```
 
-### 2、组件扫描
+### 组件扫描
 
 #### **@ComponentScan**
 
@@ -3573,7 +3517,7 @@ public class WebConfig {
 
 组件已经注册成功。
 
-### 3、自动装配
+### 自动装配
 
 当 Spring 装配  `Bean` 属性时，有时候非常明确，就是需要将某个 Bean 的引用装配给指定属性。比如，如果我们的应用上下文中只有一个 `org.mybatis.spring.SqlSessionFactoryBean` 类型的 Bean，那么任意一个依赖`SqlSessionFactoryBean` 的其他 Bean 就是需要这个 Bean。毕竟这里只有一个 `SqlSessionFactoryBean` 的 Bean。
 
@@ -3631,7 +3575,7 @@ public class Student {
 }
 ```
 
-### **4、前后端传值**
+### 前后端传值
 
 #### **@PathVariable，@RequestParam**
 
@@ -3755,7 +3699,7 @@ public String index(@ModelAttribute("words") String words) {
 }
 ```
 
-### **5、处理常见的 HTTP 请求类型**
+### 处理常见的 HTTP 请求类型
 
 - **GET** ：请求从服务器获取特定资源，使用 `@GetMapping` 处理。
 - **POST** ：在服务器上创建一个新的资源，使用 `@PostMapping` 处理。
@@ -3768,7 +3712,7 @@ public String index(@ModelAttribute("words") String words) {
 
 此注解用在类或方法上以支持跨域请求，是 Spring 4.2 后引入的。
 
-### 6、读取配置信息
+### 读取配置信息
 
 数据源 `application.yml` 内容如下：
 
@@ -3849,7 +3793,7 @@ public class TestProperties {
 
 注解 `@PropertySource("classpath:test.properties")` 指明了使用哪个配置文件。要使用该配置 Bean，同样也需要在入口类里使用注解 `@EnableConfigurationProperties({TestProperties.class})` 来启用该配置。
 
-### 7、事务
+### 事务
 
 在要开启事务的方法上使用`@Transactional`注解。
 
@@ -3956,7 +3900,7 @@ protected TransactionAttribute computeTransactionAttribute(Method method, Class<
 
 这种情况出现的概率并不高，事务能否生效数据库引擎是否支持事务是关键。常用的MySQL数据库默认使用支持事务的`innodb`引擎。一旦数据库引擎切换成不支持事务的`myisam`，那事务就从根本上失效了。
 
-### 8、异常处理
+### 异常处理
 
 #### 使用 `@ControllerAdvice` 和 `@ExceptionHandler` 处理全局异常
 
@@ -4086,7 +4030,7 @@ public ResponseStatusException(HttpStatus status, @Nullable String reason, @Null
 }
 ```
 
-### 9、测试
+### 测试
 
 `@ActiveProfiles` 一般作用于测试类上， 用于声明生效的 Spring 配置文件。
 
@@ -4194,57 +4138,26 @@ public class SingletonBean {
 
 这样，每次调用 `getPrototypeBeanMessage` 方法时，都会获取一个新的原型 Bean 实例，从而确保每个实例都是独立的。这是一种解决单例与原型依赖问题的方法，确保了单例 Bean 中原型 Bean 的正确使用。
 
-### Spring AOP 和 AspectJ 之间的区别
-
-AspectJ 可以做 Spring AOP 干不了的事情，它是 AOP 编程的完全解决方案，Spring AOP 则致力于解决企业级开发中最普遍的 AOP（方法织入）。
-
-下表总结了 Spring AOP 和 AspectJ 之间的区别：
-
-|                    Spring AOP                    |                           AspectJ                            |
-| :----------------------------------------------: | :----------------------------------------------------------: |
-|                 在纯 Java 中实现                 |                 使用 Java 编程语言的扩展实现                 |
-|               不需要单独的编译过程               |         除非设置 LTW，否则需要 AspectJ 编译器 (ajc)          |
-|                只能使用运行时织入                |       运行时织入不可用，支持编译时、编译后和加载时织入       |
-|            功能不强-仅支持方法级编织             | 更强大 - 可以编织字段、方法、构造函数、静态初始值设定项、最终类/方法等 |
-|      只能在由 Spring 容器管理的 Bean 上实现      |                    可以在所有域对象上实现                    |
-|               仅支持方法执行切入点               |                        支持所有切入点                        |
-| 代理是由目标对象创建的, 并且切面应用在这些代理上 | 在执行应用程序之前 (在运行时) 前, 各方面直接在代码中进行织入 |
-|                比 AspectJ 慢多了                 |                          更好的性能                          |
-|                  易于学习和应用                  |                 相对于 Spring AOP 来说更复杂                 |
-
-以下 Spring 官方的回答：（总结来说就是 Spring AOP 更易用，AspectJ 更强大）。
-
-- Spring AOP 比完全使用 AspectJ 更加简单， 因为它不需要引入 AspectJ 的编译器／织入器到你开发和构建过程中。 如果仅仅需要在 Spring Bean 上通知执行操作，那么 Spring AOP 是合适的选择；
-- 如果需要通知 domain 对象或其它没有在 Spring 容器中管理的任意对象，那么需要使用 AspectJ；
-- 如果想通知除了简单的方法执行之外的连接点（如：调用连接点、字段 `get` 或 `set` 的连接点等等）， 也需要使用 AspectJ。
-
-当使用 AspectJ 时，可以选择使用 AspectJ 语言（也称为“代码风格”）或 `@AspectJ` 注解风格。 如果切面在设计中扮演一个很大的角色，并且能在 Eclipse 等 IDE 中使用 AspectJ Development Tools (AJDT)， 那么首选 AspectJ 语言：因为该语言专门被设计用来编写切面，所以会更清晰、更简单。如果没有使用 Eclipse 等 IDE，或者在应用中只有很少的切面并没有作为一个主要的角色，或许应该考虑使用`@AspectJ` 风格 并在 IDE 中附加一个普通的 Java 编辑器，并且在构建脚本中增加切面织入（链接）的段落。
-
 # Spring Boot
 
 <img src="img/logo/springboot_logo.png" alt="springboot_logo" style="zoom:50%;" />
 
-## Web 开发
+## Web开发
 
 ### 过滤器和拦截器
 
-#### 一、过滤器和拦截器的区别
+#### 过滤器和拦截器的区别
 
-1、**过滤器和拦截器触发时机不一样**，过滤器是在请求进入 Spring 容器后，但请求进入Servlet 之前进行预处理的。请求结束返回也是，是在 Servlet 处理完后，返回给前端之前。
+1. 过滤器和拦截器触发时机不一样，过滤器是在请求进入 Spring 容器后，但请求进入 Servlet 之前进行预处理的。请求结束返回也是，是在 Servlet 处理完后，返回给前端之前。
+2. 拦截器可以获取 Spring 容器中的各个 Bean，而过滤器不行，因为拦截器是 Spring 提供并管理的，Spring 的功能可以被拦截器使用，在拦截器里注入一个 Service，可以调用业务逻辑。而过滤器是 JavaEE 标准，只需依赖 Servlet API ，不需要依赖 Spring。
+3. 过滤器的实现基于回调函数，而拦截器（代理模式）的实现基于反射。
+4. 过滤器依赖于 Servlet 容器，属于 Servlet 规范的一部分，而拦截器则是独立存在的，可以在任何情况下使用。
+5. 过滤器的执行由 Servlet 容器回调完成，而拦截器通常通过动态代理（反射）的方式来执行。
+6. 过滤器的生命周期由 Servlet 容器管理，而拦截器则可以通过 Spring 容器来管理，因此可以通过注入等方式来获取其他 Bean 的实例，因此使用会更方便。
 
-2、拦截器可以获取 Spring 容器中的各个 Bean，而过滤器不行，因为拦截器是 Spring 提供并管理的，Spring 的功能可以被拦截器使用，在拦截器里注入一个 Service，可以调用业务逻辑。而过滤器是 JavaEE 标准，只需依赖 Servlet API ，不需要依赖 Spring。
+#### 过滤器的配置
 
-3、过滤器的实现基于回调函数，而拦截器（代理模式）的实现基于反射。
-
-4、过滤器依赖于 Servlet 容器，属于 Servlet 规范的一部分，而拦截器则是独立存在的，可以在任何情况下使用。
-
-5、过滤器的执行由 Servlet 容器回调完成，而拦截器通常通过动态代理（反射）的方式来执行。
-
-6、过滤器的生命周期由 Servlet 容器管理，而拦截器则可以通过 Spring 容器来管理，因此可以通过注入等方式来获取其他 Bean 的实例，因此使用会更方便。
-
-#### 二、过滤器的配置
-
-##### 方法一、使用 SpringBoot 提供的 `FilterRegistrationBean` 注册 Filter
+##### 方法一、使用 SpringBoot 提供的 FilterRegistrationBean 注册 Filter
 
 **1、定义 Filter**
 
@@ -4284,16 +4197,16 @@ public class FilterConfig {
 
 需要注意：`@WebFilter` 这个注解是 Servlet3.0 的规范，并不是 Spring Boot 提供的。除了这个注解以外，还需在启动类中添加 `@ServletComponetScan` 注解指定扫描的包。
 
-##### 两种方式的本质都是一样的，都是去 `FilterRegistrationBean` 注册自定义过滤器。
+两种方式的本质都是一样的，都是去 `FilterRegistrationBean` 注册自定义过滤器。
 
-**过滤器应用场景**
+#### 过滤器的应用场景
 
 * 过滤敏感词汇（防止SQL注入）
 * 设置字符编码
 * URL级别的权限访问控制
 * 压缩响应信息
 
-#### 三、拦截器的配置
+#### 拦截器的配置
 
 **1、定义拦截器**
 
@@ -4340,20 +4253,20 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
 }
 ```
 
-**应用场景**
+#### 拦截器应用场景
 
 拦截器本质上是面向切面编程，符合横切关注点的功能都可以放在拦截器中来实现，主要的应用场景包括：
 
-- 登录验证，判断用户是否登录。
-- 权限验证，判断用户是否有权限访问资源，如校验 token。
-- 日志记录，记录请求操作日志（用户ip，访问时间等），以便统计请求访问量。
-- 处理 Cookie、本地化、国际化、主题等。
-- 性能监控，监控请求处理时长等。
-- 通用行为：读取cookie得到用户信息并将用户对象放入请求，从而方便后续流程使用，还有如提取Locale、Theme信息等，只要是多个处理器都需要的即可使用拦截器实现。
+- 登录验证，判断用户是否登录
+- 权限验证，判断用户是否有权限访问资源，如校验 token
+- 日志记录，记录请求操作日志（用户 ip，访问时间等），以便统计请求访问量
+- 处理 Cookie、本地化、国际化、主题等
+- 性能监控，监控请求处理时长等
+- 通用行为：读取 Cookie 得到用户信息并将用户对象放入请求，从而方便后续流程使用，还有如提取 Locale、Theme 信息等，只要是多个处理器都需要的即可使用拦截器实现
 
 ### JSON处理
 
-> Spring Boot 内置 `Jackson` 用于处理 JSON 数据。
+> Spring Boot 内置 Jackson 用于处理 JSON 数据。
 
 #### 自定义ObjectMapper
 
@@ -4392,7 +4305,7 @@ public class User {
 }
 ```
 
-如果想要改变时间默认输出格式，我们可以自定义一个 `ObjectMapper` 来替代：
+如果想要改变时间默认输出格式，可以自定义一个 `ObjectMapper` 来替代：
 
 ```java
 @Configuration
@@ -4406,7 +4319,7 @@ public class JacksonConfig {
 }
 ```
 
-上面配置获取了 `ObjectMapper` 对象，并且设置了时间格式。再次访问 `/getuser`，页面输出：
+上面配置获取了 `ObjectMapper` 对象，并且设置了时间格式。再次调用接口，页面输出：
 
 ```json
 {
@@ -4419,7 +4332,7 @@ public class JacksonConfig {
 
 #### 序列化
 
-Jackson 通过使用 `ObjectMapper` 的 `writeValueAsString` 方法将 Java 对象序列化为 JSON 格式字符串：
+Jackson 通过使用 `ObjectMapper.writeValueAsString` 方法将 Java 对象序列化为 JSON 格式字符串：
 
 ```java
 objectMapper.writeValueAsString(user);  
@@ -4532,18 +4445,13 @@ public class User {
 ```java
 // 格式化日期
 @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+// 指定Date类型属性反序列化的格式
+@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 private Date birthday;
-// 将Java Integer类型格式化为JSON字符串类型（默认转为JSON字符c类型）
+// 将Java Integer类型格式化为JSON字符串类型
 @JsonFormat(shape = JsonFormat.Shape.STRING)
 private Integer id;
 ```
-
-> @DateTimeFormat：用于指定 `Date` 类型属性反序列化的格式
->
-> ```java
-> @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-> private Date birthday;
-> ```
 
 ##### @JsonNaming
 
@@ -4611,23 +4519,46 @@ public class Account {
 }
 ```
 
-### webjar
+### 处理 LocalDateTime
 
-可用 jar 方式添加 CSS、JS 等资源文件。
+#### 将LocalDateTime字段以时间戳的方式返回给前端
 
-例如添加 jQurey：
+添加日期转化类：
 
-```xml
-<dependency>
-    <groupId>org.webjars</groupId>
-    <artifactId>jquery</artifactId>
-    <version>3.5.1</version>
-</dependency>
+```java
+public class LocalDateTimeConverter extends JsonSerializer<LocalDateTime> {
+
+    @Override
+    public void serialize(LocalDateTime value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+    	gen.writeNumber(value.toInstant(ZoneOffset.of("+8")).toEpochMilli());
+    }
+}
 ```
 
-访问方式：http://localhost:8080/webjars/jquery/3.5.1/jquery.js，端口号后的资源路径取决于依赖中包的路径。
+并在 `LocalDateTime` 字段上添加 `@JsonSerialize` 注解：
 
-<img src="https://note1145141919810.oss-cn-hangzhou.aliyuncs.com/webjar路径示例.png" style="zoom:50%;" />
+```java
+@JsonSerialize(using = LocalDateTimeConverter.class)
+protected LocalDateTime gmtModified;
+```
+
+#### 将LocalDateTime字段以指定格式化日期的方式返回给前端
+
+在 `LocalDateTime` 字段上添加 `@JsonFormat` 注解即可：
+
+```java
+@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+protected LocalDateTime gmtModified;
+```
+
+#### 对前端传入的日期进行格式化
+
+在 `LocalDateTime` 字段上添加 `@DateTimeFormat` 注解即可：
+
+```java
+@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+protected LocalDateTime gmtModified;
+```
 
 ## 配置
 
@@ -4693,12 +4624,12 @@ java -jar xxx.jar --spring.profiles.active={profile}
 @PostMapping("/upload")
 public HttpResult singleFileUpload(@RequestPart("file") MultipartFile file) throws IOException {
     if (file.isEmpty()) {
-        return HttpResult.fail("请选择一个文件上传");
+    	return HttpResult.fail("请选择一个文件上传");
     }
     byte[] bytes = file.getBytes();
     Path path = Paths.get(UPLOADED_FOLDER + file.getOriginalFilename());
     Files.write(path, bytes);
-	return HttpResult.success("上传文件成功：" + file.getOriginalFilename());
+    return HttpResult.success("上传文件成功：" + file.getOriginalFilename());
 }
 ```
 
@@ -4799,7 +4730,7 @@ spring:
 
 下面分别介绍这两个接口的用法：
 
-### 1、 实现  CommandLineRunner  接口
+### 实现  CommandLineRunner  接口
 
 `CommandLineRunner` 接口要求实现一个 `run` 方法，该方法会在 Spring Boot 应用程序启动后立即执行。方法签名如下：
 
@@ -4815,7 +4746,7 @@ public class MyCommandLineRunner implements CommandLineRunner {
 }
 ```
 
-### 2、实现 ApplicationRunner 接口
+### 实现  ApplicationRunner  接口
 
 `ApplicationRunner` 接口也用于创建可执行的任务，与 `CommandLineRunner` 不同，它的 `run` 方法接收一个 `ApplicationArguments` 参数，该参数包含了应用程序启动时传递的命令行参数。
 
@@ -5025,8 +4956,6 @@ xxx.yyy.zzz
 >
 > 密钥 `secret` 保存在服务端，服务端会根据这个密钥进行生成 `token` 和验证。
 
-
-
 # 遇到的Bug
 
 ## IDEA Tomcat 控制台输出中文乱码
@@ -5083,9 +5012,9 @@ Error evaluating expression 'ew != null and ew.sqlFirst != null'.Cause : org.apa
 ]
 ```
 
-## 前端 JS 在获取后端 Long 型参数时，出现精度丢失
+## 前端 JS 在获取后端 Long 类型参数时，出现精度丢失
 
-由于 JavaScript 中 Number 类型的自身原因，并不能完全表示 Long 型的数字，在 Long 长度大于17位时会出现精度丢失的问题，超过17位的部分会变成 `0`。
+由于 JavaScript 中 `Number` 类型的自身原因，并不能完全表示 `Long` 型的数字，在 `Long` 长度大于 17 位时会出现精度丢失的问题，超过 17 位的部分会变成 `0`。
 
 **解决方案**
 

@@ -451,8 +451,8 @@ int compareTo(E other)
 ### 泛型类
 
 ```java
-//此处T可以随便写为任意标识，常见的如T、E、K、V等形式的参数常用于表示泛型
-//在实例化泛型类时，必须指定T的具体类型
+// 此处T可以随便写为任意标识，常见的如T、E、K、V等形式的参数常用于表示泛型
+// 在实例化泛型类时，必须指定T的具体类型
 public class Generic<T> {
 
     private T key;
@@ -521,7 +521,7 @@ String[] stringArray = { "Hello", "World" };
 printArray(stringArray);
 ```
 
-### **类型擦除**
+### 类型擦除
 
 Java 的泛型是伪泛型，这是因为 Java 在编译期间，所有的泛型信息都会被编译器抹除。Java 中的泛型是在编译器这个层次上实现的，编译生成的字节码中不含泛型中的类型信息，使用泛型的时候加上的类型参数，在编译器编译的时候会被去掉，这个过程称为类型擦除。
 
@@ -793,34 +793,6 @@ public @interface SuppressWarnings {
 |   serial    | 当可序列化的类缺少serialVersionUID定义时的警告  |
 |   finally   |       任意finally子句不能正常完成时的警告       |
 |     all     |               以上所有情况的警告                |
-
-#### Java 7 后新增注解
-
-##### @FunctionalInterface
-
-Java 8 开始支持，标识一个匿名函数或函数式接口。
-
-```java
-@Documented
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface FunctionalInterface {}
-```
-
-##### **@Repeatable** 
-
-Java 8 开始支持，标识某注解可以在同一个声明上使用多次。
-
-```java
-@Documented
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.ANNOTATION_TYPE)
-public @interface Repeatable {
-    Class<? extends Annotation> value();
-}
-```
-
-
 
 ### 自定义注解
 
@@ -1300,11 +1272,11 @@ transient 关键字的作用是控制变量的序列化，在变量声明前加�
 `static` 静态变量不是对象状态的一部分，因此它不参与序列化。那么反序列化之后。我们可以这么理解，静态变量的话，不属于对象的特有的，谁都可以进行改变，所以序列化了之后，在反序列返回来可能就不是那个值了。
 如果一个变量修饰为 `static final` 的话，这时候由于 `final` 定义的不可被改变，那么这时候这个属性就会被持久化了。
 
-# Java8新特性
+## Java8 新特性
 
-## 接口内允许添加默认实现的方法
+### 默认方法
 
-Java 8 允许我们通过 `default` 关键字对接口中定义的抽象方法提供一个默认的实现。
+Java 8 允许通过 `default` 关键字对接口中定义的抽象方法提供一个默认的实现。
 
 ```java
 // 定义一个公式接口
@@ -1321,247 +1293,632 @@ interface Formula {
 
 在上面这个接口中，除了定义了一个抽象方法 `calculate`，还定义了一个带有默认实现的方法 `sqrt`。在实现这个接口时，可以只需要实现 `calculate` 方法，默认方法 `sqrt` 可以直接调用即可，也就是说可以不必强制实现 `sqrt` 方法。
 
-> 通过 `default` 关键字这个新特性，可以非常方便地对之前的接口做拓展，而此接口的实现类不必做任何改动。
+通过 `default` 关键字这个新特性，可以非常方便地对之前的接口做拓展，而此接口的实现类不必做任何改动。
 
-## Lambda表达式
+#### 为什么出现默认方法
 
-在 Java 中，Lambda 表达式的格式是像下面这样：
+为什么要有这个特性? 首先，之前的接口是个双刃剑，好处是面向抽象而不是面向具体编程，缺陷是，当需要修改接口时候，需要修改全部实现该接口的类，目前的 Java8 之前的集合框架没有 `foreach` 方法，通常能想到的解决办法是在 JDK 里给相关的接口添加新的方法及实现。然而，对于已经发布的版本，是没法在给接口添加新方法的同时不影响已有的实现，所以引进的默认方法。目的是为了解决接口的修改与现有的实现不兼容的问题。
+
+#### java8 抽象类与接口对比
+
+|                            相同点                            |                            不同点                            |
+| :----------------------------------------------------------: | :----------------------------------------------------------: |
+|                         都是抽象类型                         | 抽象类不可以多重继承，接口可以(无论是多重类型继承还是多重行为继承) |
+|                都可以有实现方法(以前接口不行)                | 抽象类和接口所反映出的设计理念不同。其实抽象类表示的是 `is-a` 关系，接口表示的是 `like-a` 关系 |
+| 都可以不需要实现类或者继承者去实现所有方法(以前不行，现在接口中默认方法不需要实现者实现) | 接口中定义的变量默认是 `public static final` 型，且必须给其初值，所以实现类中不能改变其值；抽象类中的变量默认是 `friendly` 型，其值可以在子类中重新定义，也可以重新赋值。 |
+
+#### 多重继承的冲突
+
+由于同一个方法可以从不同接口引入，自然而然的会有冲突的现象，默认方法判断冲突的规则如下：
+
+* 一个声明在类里面的方法优先于任何默认方法。
+* 否则，优先选取路径最短的。
+
+举个栗子：
 
 ```java
-// 无参数，无返回值
-() -> log.info("Lambda")
-
- // 有参数，有返回值
-(int a, int b) -> a+b
-```
-
-其等价于
-
-```java
-log.info("Lambda");
-
-private int plus(int a, int b){
-   return a+b;
+public interface A {
+	default void aa() {
+		System.out.println("A's aa");
+	}
+}
+public interface B {
+	default void aa() {
+		System.out.println("B's aa");
+	}
+}
+public static class D implements A,B {
+	
 }
 ```
 
-常见的一个例子是新建线程，匿名内部类的写法：
+报错
 
 ```java
-new Thread(new Runnable() {
+Duplicate default methods named aa with the parameters () and () are inherited from the types DocApplication.B and DocApplication.A
+```
+
+如果一定要这么写呢，同时实现 `A，B` 并且使用 `A` 中 `aa`，可以这么写：
+
+```java
+public static class D implements A,B {
     @Override
-    public void run() {
-        System.out.println("快速新建并启动一个线程");
+    public void aa(){
+        A.super.aa();
     }
-}).start();
+}
 ```
 
-Lambda表达式的写法：
+### Stream
+
+> Java8中，`Collection` 新增了两个流方法，分别是 `Stream()` 和 `parallelStream()`，`Stream` 将要处理的元素集合看作一种流，在流的过程中，可以通过 lambda 表达式对集合进行大批量数据操作，比如：筛选、排序、聚合等。
+
+#### 特性
+
+* `Stream` 可以由数组或集合创建，对流的操作分为两种：
+  * 中间操作，每次返回一个新的流，可以有多个。
+  * 终端操作，每个流只能进行一次终端操作，终端操作结束后流无法再次使用。终端操作会产生一个新的集合或值。
+* `Stream` 不存储数据，而是按照特定的规则对数据进行计算，一般会输出结果。
+* `Stream` 不会改变数据源，通常情况下会产生一个新的集合或一个值。
+* `Stream` 具有延迟执行特性，只有调用终端操作时，中间操作才会执行。
+
+#### 顺序流和并行流
+
+`stream` 是顺序流，由主线程按顺序对流执行操作，而 `parallelStream` 是并行流，内部以多线程并行执行的方式对流进行操作，但前提是流中的数据处理没有顺序要求。
 
 ```java
-new Thread(()->{
-    System.out.println("快速新建并启动一个线程");
-}).start();
+// 顺序流
+List<Object> Objects = list.getStream.collect(Collectors.toList());
+// 并行流
+List<Object> Objects2 = list.getStream.parallel().collect(Collectors.toList());
 ```
 
-Lambda 表达式简化了匿名内部类的形式，可以达到同样的效果，但是 Lambda 要优雅的多。虽然最终达到的目的是一样的，但其实内部的实现原理却不相同。
+如果流中的数据量足够大，并行流可以加快处速度，除了直接创建并行流，还可以通过 `parallel()` 把顺序流转换成并行流。
 
-匿名内部类在编译之后会创建一个新的匿名内部类出来，而 Lambda 是调用 JVM `invokedynamic` 指令实现的，并不会产生新类。
+#### Stream常用API
 
-## 函数式接口(*Functional Interface*)
+##### of
 
-在书写一段 Lambda 表达式后，Java 编译器是如何进行类型推断的，它又是怎么知道重写的哪个方法的？
-
-需要说明的是，不是每个接口都可以缩写成 Lambda 表达式。只有那些函数式接口才能缩写成 Lambda 表示式。
-
-函数式接口就是只包含一个抽象方法的声明。针对该接口类型的所有 Lambda 表达式都会与这个抽象方法匹配。
-
-> Java 8 中通过 `defualt` 关键字来为接口添加的默认方法不算抽象方法。因此，可以毫无顾忌的添加默认方法，它并不违反函数式接口的定义。
-
-只要接口中仅仅包含一个抽象方法，就可以将其改写为 Lambda 表达式。为了保证一个接口明确的被定义为一个函数式接口，需要为该接口添加注解：`@FunctionalInterface`。这样，一旦添加了第二个抽象方法，编译器会立刻抛出错误提示。
-
-## 方法引用
-
-方法引用的出现，使得我们可以将一个方法赋给一个变量或者作为参数传递给另外一个方法，`::` 双冒号作为方法引用的符号。
-
-方法引用可以认为是 Lambda 表达式的一种特殊形式，Lambda 表达式可以让开发者自定义抽象方法的实现代码，方法引用则可以让开发者直接引用已存在的实现方法，作为 Lambda表达式的 Lambda 体（参数列表需要一致）。
-
-### 方法引用的几种形式
-
-#### 一、类::静态方法
-
-可以将一个类中的静态方法作为 Lambda 体：
+可接收一个或多个泛型对象，构造一个 `Stream` 对象。
 
 ```java
-@FunctionalInterface
-public interface ImTheOne {
-    String handleString(String a, String b);
-}
-class OneClass {
-    public static String concatString(String a, String b) {
-        return a + b;
-    }
-}
- 
-public class Test {
-    public static void main(String[] args) {
-        // 将 OneClass 类的 concatString 方法作为 Lambda 表达式的 Lambda 体，当调用接口 ImTheOne 的 handleString 方法时，实际上掉用的是 OneClass 类的 concatString 方法
-        ImTheOne theOne = OneClass::concatString;
-        String result = theOne.handleString("abc", "def");
-        System.out.println(result);
-        // 等价
-        ImTheOne theOne2 = (a, b) -> OneClass.concatString(a, b);
-        String result2 = theOne2.handleString("123", "456");
-        System.out.println(result2);
-    }
-}
+Stream<String> stringStream = Stream.of("a","b","c");
 ```
 
-> 注意：
->
-> 1、OneClass 类的 concatString 方法的参数列表，和 ImTheOne 接口的 handleString 方法参数列表必须一致，才能用方法引用，否则编译报错。
->
-> 2、此时的 concatString 方法必须标记为静态方法，否则编译会报错。
+##### empty
 
-#### 二、对象::实例方法
+创建一个空的 `Stream` 对象。
 
-可以将一个实例的非静态方法作为 Lambda 体：
+##### concat
+
+连接两个 `Stream` ，不改变其中任何一个 `Steam` 对象，返回一个新的 `Stream` 对象。
 
 ```java
-@FunctionalInterface
-public interface ImTheOne {
-    String handleString(String a, String b);
-}
-class OneClass {
-    public String concatString(String a, String b) {
-        return a + b;
-    }
-}
- 
-public class Test {
-    public static void main(String[] args) {
-        OneClass oneClass = new OneClass();
-        ImTheOne theOne = oneClass::concatString
-        String result = theOne.handleString("abc", "def");
-        System.out.println(result);
-        // 等价
-        OneClass oneClass2 = new OneClass();
-        ImTheOne theOne2 = (a, b) -> oneClass2.concatString(a, b);
-        String result2 = theOne2.handleString("123", "456");
-        System.out.println(result2);
-    }
-}
+Stream<String> a = Stream.of("a","b","c");
+Stream<String> b = Stream.of("d","e");
+Stream<String> c = Stream.concat(a,b);
 ```
 
-> 注意：
->
-> 1、这种模式下, concatString 方法不能标记为静态方法，否则编译会报错。
->
-> 2、这里的对象可以是父对象，比如可以使用：
->
-> ```java
-> super::concatString
-> ```
->
-> 这种形式（如果有父类有这个方法的话）。
+##### max，min
 
-#### 三、类::实例方法
-
-这种模式并不是要直接调用类的实例方法，实际上是 `对象::实例方法` 模式的一种变形。当一个对象调用方法时，方法的某个参数是函数式接口，而且函数式接口的方法参数列表的第一个参数就是调用者对象所属的类时，可以引用调用者类中定义的，不包含函数式接口第一个参数的方法，并用 `类::实例方法` 这种形式来表达。
+`max` 一般用于求数字集合中的最大值，或者按实体中数字类型的属性比较，它接收一个 `Comparator<T>`。
 
 ```java
-public class Test {
-    public static void main(String[] args) {
-    	List<Student> list = Stream.of(new Student("xiao", 90),new Student("peng", 80), new Student("ke", 95))
-        	.sorted(Student::compareByScore)
-        	.collect(Collectors.toList());
-    	System.out.println(list);
-    }
-}
- 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-class Student {
-    private String name;
-    private int score;
-    
-    public int compareByScore(Student student){
-        return this.getScore() - student.getScore();
-    }
-}
+Integer max = Stream.of(2, 2, 100, 5).max(Integer::compareTo).get();
 ```
 
-如果将上面的 `compareByScore` 方法改成如下形式，编译报错：
+也可以自定义一个 `Comparator`：
 
 ```java
- public int compareByScore(Student student1, Student student2){
- 	return student1.getScore() - student2.getScore();
- }
+Integer max = Stream.of(2, 2, 100, 5).max((x, y) -> (x < y) ? -1 : ((x.equals(y)) ? 0 : 1)).get();
 ```
 
-这种模式有两个要求：
+`min` 一般用于求最小值，使用方法与 `max` 类似。
 
-1、接口方法的参数比引用方法的参数多一个。
+##### findFirst
 
-2、接口方法的第一个参数恰巧是调用引用方法的对象（其引用方法所在类或其子类的实例）。
+获取 `Stream` 中的第一个元素。
 
-#### 四、构造器引用 类::new
+##### findAny
 
-构造方法引用实际上表示一个函数式接口中的唯一方法引用了一个类的构造方法，引用的是那个参数相同的构造方法。
+获取 `Stream` 中的某个元素，如果是串行情况下，一般都会返回第一个元素，并行情况下就不一定了。
+
+##### count
+
+返回 `Stream` 中元素个数。
 
 ```java
-@FunctionalInterface
-public interface ImTheOne {
-    TargetClass getTargetClass(String a);
-}
-class TargetClass {
-    String oneString;
- 
-    public TargetClass() {
-        oneString = "default";
-    }
- 
-    public TargetClass(String a) {
-        oneString = a;
-    }
-}
- 
-public class Test {
-    public static void main(String[] args) {
-        ImTheOne imTheOne = TargetClass::new;
-        TargetClass targetClass = imTheOne.getTargetClass("abc");
-        System.out.println(targetClass.oneString);
-        // 等价
-        ImTheOne imTheOne2 = (a) -> new TargetClass(a)
-        TargetClass targetClass2 = imTheOne2.getTargetClass("123");
-        System.out.println(targetClass2.oneString);
-    }
-}
+long x = Stream.of("a", "b", "c").count();
 ```
 
-#### 五、数组引用，数组::new
+##### peek
 
-数组引用是构造器引用的一种，可以引用一个数组的构造。
+建立一个通道，在这个通道中对 `Stream` 的每个元素执行对应的操作，对应 `Consumer<T>` 的函数式接口，这是一个消费者函数式接口，用来消费 `Stream` 元素。
+
+```java
+List<String> list = Stream.of("a", "b", "c").peek(e->System.out.println(e.toUpperCase())).collect(Collectors.toList());// 输出 A B C
+```
+
+##### forEach
+
+和 `peek` 方法类似，都接收一个消费者函数式接口，可以对每个元素进行对应的操作，但是和 `peek` 不同的是，`forEach` 执行之后，这个 `Stream` 就真的被消费掉了，之后这个 `Stream` 流就没有了，不可以再对它进行后续操作了，而 `peek`操作完之后，还是一个可操作的 `Stream` 对象。
+
+```java
+Stream<String> a = Stream.of("a", "b", "c");
+a.forEach(e->System.out.println(e.toUpperCase()));
+```
+
+##### forEachOrdered
+
+功能与 `forEach` 是一样的，不同的是，`forEachOrdered` 是有顺序保证的，也就是对 `Stream` 中元素按插入时的顺序进行消费。为什么这么说呢，当开启并行的时候，`forEach` 和 `forEachOrdered` 的效果就不一样了。
+
+```java
+Stream<String> a = Stream.of("a", "b", "c");
+a.parallel().forEach(e->System.out.println(e.toUpperCase()));
+```
+
+当使用上面的代码时，输出的结果可能是 `b、a、c` 或者 `a、c、b` 或者 `a、b、c`，而使用下面的代码，则每次都是 `a、 b、c`。
+
+```java
+Stream<String> a = Stream.of("a", "b", "c");
+a.parallel().forEachOrdered(e->System.out.println(e.toUpperCase()));
+```
+
+##### limit
+
+获取前 n 条数据。
+
+```java
+Stream<String> a = Stream.of("a", "b", "c");
+a.limit(2).forEach(e->System.out.println(e));// 输出 a b
+```
+
+##### skip
+
+跳过前 n 条数据。
+
+```java
+Stream<String> a = Stream.of("a", "b", "c");
+a.skip(2).forEach(e->System.out.println(e));// 输出 c
+```
+
+##### distinct
+
+元素去重。
+
+```java
+Stream<String> a = Stream.of("a", "b", "c", "b");
+a.distinct().forEach(e->System.out.println(e));// 输出 a b c
+```
+
+##### sorted
+
+排序，有两个重载，一个无参数，另外一个有个 `Comparator` 类型的参数。
+
+无参类型的按照自然顺序进行排序，只适合比较单纯的元素，比如数字、字母等。
+
+```java
+Stream<String> a = Stream.of("a", "c", "b");
+a.sorted().forEach(e->System.out.println(e));
+```
+
+有参数的需要自定义排序规则：
+
+```java
+// 按照第二个字母的大小顺序排序
+Stream<String> a = Stream.of("a1", "c6", "b3");
+a.sorted((x,y)->Integer.parseInt(x.substring(1))>Integer.parseInt(y.substring(1))?1:-1).forEach(e->System.out.println(e));// 输出 a1 b3 c6
+```
+
+##### filter
+
+用于条件筛选过滤，筛选出符合条件的数据。
+
+```java
+// 筛选出性别为 0，年龄大于 50 的记录
+Stream<User> stream = users.stream();
+stream.filter(user -> user.getGender().equals(0) && user.getAge()>50).forEach(e->System.out.println(e));
+```
+
+##### map
+
+`map` 方法的接口方法声明如下，接受一个 `Function` 函数式接口，把它翻译成映射最合适了，通过原始数据元素，映射出新的类型。
+
+```java
+<R> Stream<R> map(Function<? super T, ? extends R> mapper);
+```
+
+而 `Function` 的声明是这样的，观察 `apply` 方法，接受一个 `T` 型参数，返回一个 `R` 型参数。用于将一个类型转换成另外一个类型正合适，这也是 `map` 的初衷所在，用于改变当前元素的类型。T 和 R 的类型也可以一样，这样的话，就和 `peek`方法没什么不同了。
 
 ```java
 @FunctionalInterface
-public interface ImTheOne<T> {
-    T getArr(int a);
+public interface Function<T, R> {
+    R apply(T t);
 }
-public class Test {
-    public static void main(String[] args) {
-        ImTheOne<int[]> imTheOne = int[]::new;
-        int[] stringArr = imTheOne.getArr(5);
+```
+
+##### mapToInt，mapToLong，mapToDouble
+
+用法参考 `map`，将元素转换成 `int`，`Long`，`Double` 类型，在 `map` 方法的基础上进行封装。
+
+##### flatMap
+
+这是用在一些比较特别的场景下，`Stream` 是以下这几种结构的时候，需要用到 `flatMap`方法，用于将原有二维结构扁平化。
+
+1. `Stream<Object[]>`
+2. `Stream<Set<Object>>`
+3. `Stream<List<Object>>`
+
+以上这三类结构，通过 `flatMap` 方法，可以将结果转化为 `Stream<Object>` 这种形式，方便之后的其他操作。
+
+```java
+List<List<Integer>> nestedList = Arrays.asList(
+    Arrays.asList(1, 2, 3),
+    Arrays.asList(4, 5),
+    Arrays.asList(6, 7, 8)
+);
+List<Integer> flattenedList = nestedList.stream()
+    .flatMap(List::stream)
+    .collect(Collectors.toList());// 输出: [1, 2, 3, 4, 5, 6, 7, 8]
+```
+
+##### collect
+
+在进行了一系列操作之后，最终的结果大多数时候并不是为了获取 `Stream` 类型的数据，而是要把结果转为 `List、Map` 这样的常用数据结构，`collect` 就是为了实现这个目的。
+
+```java
+// 过滤出大于7的值，然后转换成List<Integer>集合
+Stream<Integer> integerStream = Stream.of(1,2,5,7,8,12,33);
+List<Integer> list = integerStream.filter(s -> s.intValue() > 7).collect(Collectors.toList());
+list.forEach(System.out::println);// 输出 8 12 33
+```
+
+下面这段代码，实现的效果与上面的代码相同，这是 `collect` 的另一个重载方法，可以理解为它的参数是按顺序执行的。
+
+```java
+Stream<Integer> integerStream = Stream.of(1,2,5,7,8,12,33);
+List<Integer> list = integerStream.filter(s -> s > 7).collect(ArrayList::new, ArrayList::add,ArrayList::addAll);
+list.forEach(System.out::println);// 输出 8 12 33
+```
+
+在自定义 `Collector` 的时候其实也是这个逻辑，不过 `Collectors` 已经为我们提供了很多拿来即用的收集器。比如经常用到的`Collectors.toList`、`Collectors.toSet`、`Collectors.toMap`。
+
+还有比如 `Collectors.groupingBy`。它允许根据指定的条件将元素分组成一个 `Map`，其中键表示分组的条件，值是满足该条件的元素的集合。
+
+```java
+List<Person> people = Arrays.asList(
+            new Person("Alice", 25),
+            new Person("Bob", 30),
+            new Person("Charlie", 25),
+            new Person("David", 30)
+        );
+Map<Integer, List<Person>> ageGroups = people.stream().collect(Collectors.groupingBy(Person::getAge));
+```
+
+输出结果：
+
+```shell
+{25=[Person{name='Alice', age=25}, Person{name='Charlie', age=25}], 30=[Person{name='Bob', age=30}, Person{name='David', age=30}]}
+```
+
+##### toArray
+
+用于将 `stream` 中的元素收集到一个数组中。
+
+```java
+List<String> stringList = Arrays.asList("A", "B", "C");
+String[] stringArray = stringList.stream().toArray(String[]::new);
+System.out.println(Arrays.toString(stringArray)); // 输出: [A, B, C]
+```
+
+##### reduce
+
+用于把 `stream` 中的元素组合成一个结果的过程，通常包括求和、求最大值、求最小值等。
+
+```java
+int[] numbers = {1, 2, 3, 4, 5};
+// 使用stream.reduce计算总和
+Optional<Integer> sum = Arrays.stream(numbers).reduce((x, y) -> x + y);
+// 输出总和
+sum.ifPresent(System.out::println); // 输出: 15
+```
+
+`stream.reduce` 返回一个 `Optional`，因为流中的元素可能为空。
+
+### Optional
+
+> 在写Java代码时可能都会有这样的经历：调用一个方法得到了返回值却不能直接将返回值作为参数去调用别的方法。首先要判断这个返回值是否为 `null`，只有在非空的前提下才能将其作为其他方法的参数。
+>
+> Java8 中提供了一个新的工具类 `Optional`，`Optional` 是一个可以为 `null` 的容器对象，用于提示程序员注意 `null` 值，并在特定场景中简化代码逻辑。
+
+以下是一个多层属性获取的例子：
+
+```java
+class Outer {
+    Nested nested;
+    Nested getNested() {
+        return nested;
+    }
+}
+class Nested {
+    Inner inner;
+    Inner getInner() {
+        return inner;
+    }
+}
+class Inner {
+    String foo;
+    String getFoo() {
+        return foo;
     }
 }
 ```
 
-使用数组引用时，函数式接口中抽象方法必须是有参数的，而且参数只能有一个，必须是数字类型 `int` 或 `Integer`，这个参数代表的是创建数组的长度。
+解决这种结构的深层嵌套路径是有点麻烦的。必须编写一堆 `null` 检查来确保不会导致一个 `NullPointerException`：
 
-## stream
+```java
+Outer outer = new Outer();
+if (outer != null && outer.nested != null && outer.nested.inner != null) {
+    System.out.println(outer.nested.inner.foo);
+}
+```
 
-## optional
+现在可以通过利用 Java 8 的 `Optional` 类型来摆脱所有这些 `null` 检查。`map` 方法接收一个 `Function` 类型的 `lambda` 表达式，并自动将每个 `function` 的结果包装成一个 `Optional` 对象。这使得能在一行中进行多个 `map` 操作。`null` 检查是在底层自动处理的。
+
+```java
+Optional.of(new Outer())
+    .map(Outer::getNested)
+    .map(Nested::getInner)
+    .map(Inner::getFoo)
+    .ifPresent(System.out::println);
+```
+
+还有一种实现相同作用的方式就是通过利用一个 `supplier` 函数来解决嵌套路径的问题：
+
+```java
+Outer obj = new Outer();
+resolve(() -> obj.getNested().getInner().getFoo())
+    .ifPresent(System.out::println);
+```
+
+调用 `obj.getNested().getInner().getFoo())` 可能会抛出一个 `NullPointerException` 异常。在这种情况下，该异常将会被捕获，而该方法会返回 `Optional.empty()`。
+
+```java
+public static <T> Optional<T> resolve(Supplier<T> resolver) {
+    try {
+        T result = resolver.get();
+        return Optional.ofNullable(result);
+    }
+    catch (NullPointerException e) {
+        return Optional.empty();
+    }
+}
+```
+
+这两个解决方案可能没有传统 `null` 检查那么高的性能，不过在大多数情况下不会有太大问题。
+
+#### Optional常用API
+
+##### of
+
+为非 `null` 的值创建一个 `Optional`。
+
+`of` 方法通过工厂方法创建 `Optional` 类。需要注意的是，创建对象时传入的参数不能为 `null`。如果传入参数为 `null`，则抛出`NullPointerException` 。
+
+```java
+//调用工厂方法创建Optional实例
+Optional<String> name = Optional.of("keqing");
+//传入参数为null，抛出NullPointerException.
+Optional<String> someNull = Optional.of(null);
+```
+
+##### ofNullable
+
+为指定的值创建一个 `Optional`，如果指定的值为 `null`，则返回一个空的 `Optional`。
+
+`ofNullable` 与 `of` 方法相似，唯一的区别是可以接受参数为 `null` 的情况。
+
+```java
+// 创建了一个不包含任何值的Optional实例
+Optional empty = Optional.ofNullable(null);
+```
+
+##### isPresent
+
+如果值存在返回 `true`，否则返回 `false`。
+
+```java
+// isPresent方法用来检查Optional实例中是否包含值
+if (name.isPresent()) {
+  // 在Optional实例内调用get()返回已存在的值
+  System.out.println(name.get());// 输出`keqing`
+}
+```
+
+##### get
+
+如果 `Optional` 有值则将其返回，否则抛出 `NoSuchElementException`。
+
+上面的示例中，`get` 方法用来得到 `Optional` 实例中的值。下面是一个抛出 `NoSuchElementException` 的例子：
+
+```java
+// 执行下面的代码会输出: No value present 
+try {
+  // 在空的Optional实例上调用get()，抛出NoSuchElementException
+  System.out.println(empty.get());
+} catch (NoSuchElementException ex) {
+  System.out.println(ex.getMessage());
+}
+```
+
+##### ifPresent
+
+如果 `Optional` 实例有值则为其调用 `consumer`，否则不做处理。
+
+要理解 `ifPresent` 方法，首先需要了解 `Consumer` 类。简答地说，`Consumer` 类包含一个抽象方法。该抽象方法对传入的值进行处理，但没有返回值。Java8 支持不用接口直接通过 `lambda` 表达式传入参数。
+
+如果 `Optional` 实例有值，调用 `ifPresent()` 可以接受接口段或 `lambda` 表达式。类似下面的代码：
+
+```java
+//ifPresent方法接受lambda表达式作为参数。
+//lambda表达式对Optional的值调用consumer进行处理。
+name.ifPresent((value) -> {
+  System.out.println("The length of the value is: " + value.length());
+});
+```
+
+##### orElse
+
+如果有值则将其返回，否则返回指定的其它值。如果 `Optional` 实例有值则将其返回，否则返回 `orElse` 方法传入的参数。
+
+```java
+//如果值不为null，orElse方法返回Optional实例的值。
+//如果为null，返回传入的消息。
+//输出: There is no value present!
+System.out.println(empty.orElse("There is no value present!"));
+//输出: keqing
+System.out.println(name.orElse("There is some value!"));
+```
+
+##### orElseGet
+
+`orElseGet` 与 `orElse` 方法类似，区别在于得到的默认值。`orElse` 方法将传入的字符串作为默认值，`orElseGet` 方法可以接受 `Supplier` 接口的实现用来生成默认值。
+
+```java
+//orElseGet与orElse方法类似，区别在于orElse传入的是默认值，
+//orElseGet可以接受一个lambda表达式生成默认值。
+//输出: Default Value
+System.out.println(empty.orElseGet(() -> "Default Value"));
+//输出: keqing
+System.out.println(name.orElseGet(() -> "Default Value"));
+```
+
+##### orElseThrow
+
+如果有值则将其返回，否则抛出 `supplier` 接口创建的异常。
+
+在 `orElseGet` 方法中，传入一个 `Supplier` 接口。然而，在 `orElseThrow` 中可以传入一个 `lambda` 表达式或方法，如果值不存在来抛出异常。
+
+```java
+try {
+  //orElseThrow与orElse方法类似。与返回默认值不同，
+  //orElseThrow会抛出lambda表达式或方法生成的异常 
+  empty.orElseThrow(ValueAbsentException::new);
+} catch (Throwable ex) {
+  //输出: No value present in the Optional instance
+  System.out.println(ex.getMessage());
+}
+```
+
+`ValueAbsentException` 定义如下：
+
+```java
+class ValueAbsentException extends Throwable {
+
+  public ValueAbsentException() {
+    super();
+  }
+
+  public ValueAbsentException(String msg) {
+    super(msg);
+  }
+
+  @Override
+  public String getMessage() {
+    return "No value present in the Optional instance";
+  }
+}
+```
+
+##### map
+
+如果有值，则对其执行调用 `mapper` 函数得到返回值。如果返回值不为 `null`，则创建包含 `mapper` 返回值的 `Optional` 作为 `map` 方法返回值，否则返回空 `Optional`。
+
+`map` 方法用来对 `Optional` 实例的值执行一系列操作。通过一组实现了 `Function` 接口的 `lambda` 表达式传入操作。
+
+```java
+// map方法执行传入的lambda表达式参数对Optional实例的值进行修改。
+// 为lambda表达式的返回值创建新的Optional实例作为map方法的返回值。
+Optional<String> upperName = name.map((value) -> value.toUpperCase());
+System.out.println(upperName.orElse("No value found"));
+```
+
+##### flatMap
+
+如果有值，为其执行 `mapper` 函数返回 `Optional` 类型返回值，否则返回空 `Optional`。`flatMap` 与 `map` 方法类似，区别在于 `flatMap` 中的 `mapper` 返回值必须是 `Optional`。调用结束时，`flatMap` 不会对结果用 `Optional` 封装。
+
+`flatMap` 方法与 `map` 方法类似，区别在于 `mapper` 函数的返回值不同。`map` 方法的 `mapping` 函数返回值可以是任何类型 `T`，而`flatMap` 方法的 `mapper` 函数必须是 `Optional`。
+
+```java
+// flatMap与map(Function)非常类似，区别在于传入方法的lambda表达式的返回类型。
+// map方法中的lambda表达式返回值可以是任意类型，在map函数返回之前会包装为Optional。 
+// 但flatMap方法中的lambda表达式返回值必须是Optionl实例。 
+Optional<String> upperName = name.flatMap((value) -> Optional.of(value.toUpperCase()));
+System.out.println(upperName.orElse("No value found"));//输出keqing
+```
+
+##### filter
+
+`filter` 方法通过传入限定条件对 `Optional` 实例的值进行过滤。如果有值并且满足断言条件返回包含该值的 `Optional`，否则返回空`Optional`。对于 `filter` 应该传入实现了 `Predicate` 接口的 `lambda` 表达式。
+
+```java
+//filter方法检查给定的Option值是否满足某些条件。
+//如果满足则返回同一个Option实例，否则返回空Optional。
+Optional<String> longName = name.filter((value) -> value.length() > 5);
+System.out.println(longName.orElse("The name is less than 6 characters"));//输出keqing
+
+//另一个例子是Optional值不满足filter指定的条件。
+Optional<String> anotherName = Optional.of("mona");
+Optional<String> shortName = anotherName.filter((value) -> value.length() > 5);
+//输出: name长度不足6字符
+System.out.println(shortName.orElse("The name is less than 6 characters"));
+```
+
+#### 使用场景
+
+下面是一些使用 `Optional` 的场景参考：
+
+* `Optional` 一般用于返回值
+  `Optional` 大多用于返回值，不推荐用在成员变量或方法参数中。
+
+* `Optional` 本身不判 `null`
+  永远都不要给 `Optional` 赋值 `null`，也不要判断 `Optional` 本身是否为 `null`，这是因为 `Optional` 本来就是解决 `null` 的，再引入 `null` 就没意思了。
+
+* 集合不使用 `Optional`
+  因为集合有 `Collections.emptyList()` 等更好的处理方法了，没必要再使用 `Optional`。
+
+* 函数式处理值
+  `Optional` 提供了很多 `lambda` 函数式处理的方法，如 `map、filter` 等，这些是使用 `Optional` 时比较推荐使用的，因为 `Optional` 能自动处理 `null` 值情况，避免 NPE 异常。
+
+* 多层属性获取
+
+* 不返回 `null` 胜过返回 `Optional`
+  返回 `Optional` 给调用方，会强制调用方处理 `null` 情况，会给调用方增加一些的编码负担，特别是复用度很高的函数。但如果调用方大多数情况下都不期望获取到 `null`，那应该实现一个这样的方法，要么返回值，要么异常，如下：
+
+  ```java
+  /**
+   * 查询订单，要么返回订单，要么异常
+   */
+  public Order getOrderByIdOrExcept(Long orderId){
+      Order order = orderMapper.getOrderById(orderId);
+      if(order == null){
+          throw new BizException("根据单号" + orderId + "未查询到订单！");
+      }
+      return order;
+  }
+  
+  /**
+   * 查询订单，值可能为null
+   */
+  public Optional<Order> getOrderById(Long orderId){
+      Order order = orderMapper.getOrderById(orderId);
+      return Optional.ofNullable(order);
+  }
+  ```
+
+  由于后面处理代码依赖订单数据，获取不到订单数据，代码也没法往下走，所以在大多数情况下，选择使用 `getOrderByIdOrExcept`方法更好，即避免了 NPE，又避免了增加编码负担。
+
+`Optional` 能解决一些问题，但因为容易滥用而争议很大，因为 `Optional` 将 `null` 的处理交给调用方了，但大多数情况下，调用方也没办法处理这个 `null` 情况，还不如让 JVM 抛一个 NPE 异常中止执行，因为如果用 `ifPresent` 的话，还更容易造成逻辑 bug 导致执行了不该执行的代码。这和 Java 的受检查异常是一样的，强制要求调用方处理异常，但又有多少场景的异常是调用方可以处理的呢？这导致开发人员经常滥用 `catch`，对异常处理一把梭了，最后发现 `catch` 后面还有一些本不该被执行的代码执行了。
 
 # Java 集合框架
 
@@ -1743,30 +2100,6 @@ iterator.forEachRemaining(element -> do something with element);
 
 包括方法锁(默认锁对象为 `this`，当前实例对象)和同步代码块锁(自己指定锁对象)。
 
-
-
-# 源码(基于JDK11)
-
-## ArrayList
-
-![arrayList源码1](https://note1145141919810.oss-cn-hangzhou.aliyuncs.com/arrayList%E6%BA%90%E7%A0%811.png)
-
-在程序试图直接分配 `Integer.MAX_VALUE` 大小的 `ArrayList`，大概率得到一个错误：
-
-```java
-ArrayList<Integer> list = new ArrayList<>(Integer.MAX_VALUE);
-```
-
-<img src="https://note1145141919810.oss-cn-hangzhou.aliyuncs.com/arrayList源码2.png">
-
-由于在不同的平台上，受到平台的影响导致能够为数组分配的实际最大数值并非为`Integer.MAX_VALUE(2,147,483,647)`，而是与这个值相接近的数值。
-
-因此，作者减8实际上是因为不想在创建的数组在扩容时计算的新容量值等于或过于接近最大值不能被平台分配出来而报出上述错误。
-
-这样程序在不同平台上运行时不会因为分配数值过大而被平台限制而出现报错。换言之，`Integer.MAX_VALUE-8`将会保证程序在任何平台上都不会因为分配问题而报出 `Requested array size exceeds VM limit` 错误。
-
-问题相关：https://stackoverflow.com/questions/31382531/why-i-cant-create-an-array-with-large-size
-
 # JVM
 
 > JVM(*Java Virtual Machine*：Java虚拟机)是运行Java字节码的虚拟机。
@@ -1901,9 +2234,9 @@ JVM 对类的静态变量、静态代码块执行初始化操作。
 
 ## lombok
 
-> lombok可以在项目编译的时候生成一些代码。
+> lombok可以在项目编译的时候自动生成一些代码。
 
-#### Maven依赖
+### Maven依赖
 
 ```xml
 <dependency>
@@ -1913,45 +2246,45 @@ JVM 对类的静态变量、静态代码块执行初始化操作。
 </dependency>
 ```
 
-#### POJO类常用注解
+### POJO类常用注解
 
-##### **@Getter/@Setter**
+#### @Getter/@Setter
 
 * 作用类上，生成所有成员变量的 `getter`/`setter` 方法。
 
 * 作用于成员变量上，生成该成员变量的 `getter`/`setter` 方法。可以设定访问权限及是否懒加载等。
 
-##### **@ToString**
+#### @ToString
 
 作用于类，覆盖默认的 `toString()` 方法，可以通过 `of` 属性限定显示某些字段，通过 `exclude` 属性排除某些字段。
 
-##### **@EqualsAndHashCode**
+#### @EqualsAndHashCode
 
 作用于类，覆盖默认的 `equals()` 和 `hashCode()`。
 
-##### **@NonNull**
+#### @NonNull
 
 作用于成员变量和参数中，标识不能为空，否则抛出空指针异常。
 
-##### **@NoArgsConstructor**
+#### @NoArgsConstructor
 
 生成无参构造器。
 
-##### **@RequiredArgsConstructor**
+#### @RequiredArgsConstructor
 
 生成包含 `final` 和 `@NonNull` 注解的成员变量的构造器。
 
-##### **@AllArgsConstructor**
+#### @AllArgsConstructor
 
 生成全参构造器。
 
 上述三个生成构造器的方法有 `staticName`，`access` 属性，`staticName` 属性设定将采用静态方法的方式生成实例，`access` 属性用于限定访问权限。
 
-##### **@Data**
+#### @Data
 
 作用于类上，是以下注解的集合：`@ToString`，`@EqualsAndHashCode`，`@Getter `，`@Setter`，`@RequiredArgsConstructor`。
 
-##### **@Builder**
+#### @Builder
 
 作用于类上，将类转变为建造者模式。
 
@@ -1961,9 +2294,9 @@ JVM 对类的静态变量、静态代码块执行初始化操作。
 User user = User.builder.name("xiao").password("114514").build();
 ```
 
-#### 其他重要注解
+### 其他重要注解
 
-##### **@Cleanup**
+#### @Cleanup
 
 自动关闭资源，针对实现了 `java.io.Closeable` 接口的对象有效，如：典型的IO流对象。
 
@@ -1971,11 +2304,11 @@ User user = User.builder.name("xiao").password("114514").build();
 @Cleanup InputStream in = new FileInputStream(file);
 ```
 
-##### **@SneakyThrows**
+#### @SneakyThrows
 
 作用于方法上，可以对受检异常进行捕捉并抛出。
 
-##### @Slf4j
+#### @Slf4j
 
 项目中使用 `Slf4j` 日志时经常这样做：
 
@@ -2027,17 +2360,17 @@ Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
 
 其中，每一行输出表示一个成员变量或对象头的信息，具体含义如下：
 
-- OFFSET：相对于 Java 对象的起始地址成员变量或对象头的偏移量；
-- SIZE：成员变量或对象头的大小，单位 Byte；
-- TYPE：成员变量或对象头的类型，包括 Java 基本类型和对象类型；
-- DESCRIPTION：成员变量或对象头的描述信息，包括成员变量的名称和类型；
-- VALUE：成员变量或对象头的值，以16进制表示。对于对象头，包括 Mark Word 和 Klass Pointer 等信息；
-- Instance size：对象实例的大小，包括对象头、实例变量和对齐填充的总大小。
-- Space losses：对象实例中的空间损失，包括对象内部的空间损失和对象外部的空间损失。
+- `OFFSET`：相对于 Java 对象的起始地址成员变量或对象头的偏移量。
+- `SIZE`：成员变量或对象头的大小，单位 `Byte`。
+- `TYPE`：成员变量或对象头的类型，包括 Java 基本类型和对象类型。
+- `DESCRIPTION`：成员变量或对象头的描述信息，包括成员变量的名称和类型。
+- `VALUE`：成员变量或对象头的值，以16进制表示。对于对象头，包括 Mark Word 和 Klass Pointer 等信息。
+- `Instance size`：对象实例的大小，包括对象头、实例变量和对齐填充的总大小。
+- `Space losses`：对象实例中的空间损失，包括对象内部的空间损失和对象外部的空间损失。
 
 需要注意的是，JOL 工具输出的信息可能会因不同的 JVM 实现和不同的 JVM 参数而有所不同，因此在使用 JOL 工具时需要注意选择合适的环境和参数。
 
-### DESCRIPTION的“alignment/padding gap”是什么意思？
+### DESCRIPTION 的 alignment/padding gap 是什么意思？
 
 先看一段示例代码：
 
@@ -2060,9 +2393,7 @@ class Test1{
 
 class Test2{
     private long p;
-
     private byte p2;
-
     private short p3;
 
     public Test2() {
@@ -2104,63 +2435,6 @@ Space losses: 1 bytes internal + 0 bytes external = 1 bytes total
 
 需要注意的是，对齐填充在内存中不占用任何有意义的数据，只是为了对齐而填充的字节。因此，对齐填充的大小可能会影响 Java 对象的内存占用大小，但不会影响对象的实际内容。
 
-## org.apache.lucene
-
-### RamUsageEstimator
-
-估算 Java 对象的大小（内存表示形式）。
-
-该类使用为 Hotspot 虚拟机发现的假设。如果您使用的不是基于 OpenJDK/Oracle 的 JVM，测量结果可能会略有偏差。
-
-#### Maven依赖
-
-```xml
-<dependency>
-    <groupId>org.apache.lucene</groupId>
-    <artifactId>lucene-core</artifactId>
-    <version>4.0.0</version>
-</dependency>
-```
-
-#### 示例代码
-
-```java
-public class Test {
-
-    public static void main(String[] args) throws InterruptedException {
-        Student stu = new Student();
-        String name = "keqing";
-        Student stu2 = new Student();
-        stu2.setName(name);
-        System.out.println(RamUsageEstimator.sizeOf(stu));
-        System.out.println(RamUsageEstimator.sizeOf(name));
-        System.out.println(RamUsageEstimator.sizeOf(stu2));
-    }
-}
-class Student{
-    private String name;
-
-    public Student() {
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-}
-```
-
-输出结果：
-
-```shell
-16
-48
-64
-```
-
 # 算法
 
 ## 加密算法
@@ -2173,23 +2447,18 @@ class Student{
 
 #### 优点
 
-1、容易计算，现在的主流编程语言基本都支持 MD5 算法的实现，所以非常容易计算出一个数据的 MD5 值；
-
-2、不可逆性，无法通过常规的方式从 MD5 值倒推出原文；
-
-3、压缩性，任意长度的数据，其 MD5 值都是一个 32 位长度的十六进制字符串，区分大小写；
-
-4、抗修改性，即使对原数据做了微小的改动，MD5 值也会有巨大的变动；
-
-5、抗碰撞性，知道了原数据及其 MD5 值，想要碰撞出这个 MD5 值，从而猜测出原数据，是非常困难的。所有的 MD5 值一共有 2 的 128 次方种可能性，用自然界无穷的数据去对应这个有限的 MD5 值集合，理论上会出现不同的数据有相同的 MD5 值，但是实际中想找到两个不同数据有着相同的 MD5 值是非常困难的。要寻找这样一对碰撞是需要耗费非常非常长的时间，依照现在计算机的计算能力，碰撞被认为在实际上是不可能发生的。
+1. 容易计算，现在的主流编程语言基本都支持 MD5 算法的实现，所以非常容易计算出一个数据的 MD5 值；
+2. 不可逆性，无法通过常规的方式从 MD5 值倒推出原文；
+3. 压缩性，任意长度的数据，其 MD5 值都是一个 32 位长度的十六进制字符串，区分大小写；
+4. 抗修改性，即使对原数据做了微小的改动，MD5 值也会有巨大的变动；
+5. 抗碰撞性，知道了原数据及其 MD5 值，想要碰撞出这个 MD5 值，从而猜测出原数据，是非常困难的。所有的 MD5 值一共有 2 的 128 次方种可能性，用自然界无穷的数据去对应这个有限的 MD5 值集合，理论上会出现不同的数据有相同的 MD5 值，但是实际中想找到两个不同数据有着相同的 MD5 值是非常困难的。要寻找这样一对碰撞是需要耗费非常非常长的时间，依照现在计算机的计算能力，碰撞被认为在实际上是不可能发生的。
 
 **现已有方法可以明显加快寻找一对碰撞的速度，所以在对安全性要求较高的场合，不建议直接使用 MD5 算法。**
 
 #### 应用场景
 
-**（1）生成数字签名**
-
-##### **（2）登录、注册、修改密码等简单加密操作**
+1. 生成数字签名
+2. 登录、注册、修改密码等简单加密操作
 
 **这个过程为什么要加密？**
 
@@ -2636,35 +2905,32 @@ after method send
 
 # Tips
 
-## **Java环境变量配置**
+## **Java 环境变量配置**
 
-1、`JAVA_HOME` 变量，点击【新建】，【变量名】为 `JAVA_HOME` ；【变量值】为 JDK 路径，例如 `C:\Program Files\Java\jdk1.8.0_xxx` 。
+1. `JAVA_HOME` 变量，点击【新建】，【变量名】为 `JAVA_HOME` ；【变量值】为 JDK 路径，例如 `C:\Program Files\Java\jdkxxx` 。
 
-2、`PATH` 变量，因为系统已经预先配置有了这个变量，只需要修改即可，点击【编辑】，进入修改界面；点击【新建】，【变量值】为 `%JAVA_HOME%\bin` ，再点击【确定】即可。
+2. `PATH` 变量，因为系统已经预先配置有了这个变量，只需要修改即可，点击【编辑】，进入修改界面；点击【新建】，【变量值】为 `%JAVA_HOME%\bin` ，再点击【确定】即可。
 
-3、`CLASSPATH` 变量，和 `JAVA_HOME` 变量的配置一样，点击【新建】，【变量名】为`CLASSPATH` ；【变量值】为 `.;%JAVA_HOME%\lib`。
+3. `CLASSPATH` 变量，和 `JAVA_HOME` 变量的配置一样，点击【新建】，【变量名】为`CLASSPATH` ；【变量值】为 `.;%JAVA_HOME%\lib`。
 
-打开命令行窗口，输入 `java -version` ，如果显示 Java 版本信息，说明环境变量配置成功。
+   打开命令行窗口，输入 `java -version` ，如果显示 Java 版本信息，说明环境变量配置成功。
 
-## JavaBean命名规范
+## JavaBean 命名规范
 
 JavaBean 命名规范中要求属性以小写字母开头，且遵守驼峰命名格式，相应的 `getter/setter` 方法是 `get/set` 接上首字母大写的属性名。例如：属性名为 `userName`，其对应的 `getter/setter` 方法是 `getUserName/setUserName`。
 
 以下是一些特殊情况的做法：
 
-1、如果属性是 `boolean` 类型，如 `success`，则 `getter` 方式为 `isSuccess`；如果是 `Boolean` 包装类，则为 `getSuccess`；
+1. 如果属性是 `boolean` 类型，如 `success`，则 `getter` 方式为 `isSuccess`；如果是 `Boolean` 包装类，则为 `getSuccess`。
+2. 如果属性名的前两个字母是大写，如 `URL`，则方法是 `getURL()/setURL()`。
 
-2、如果属性名的前两个字母是大写，如 `URL`，则方法是 `getURL()/setURL()`。
+以下是一些特殊情况下不规范的做法，这些做法可能导致使用 lombok 等自动代码工具时出现 Bug：
 
-以下是一些特殊情况下不规范的做法，这些做法可能导致使用 lombok 等自动代码工具时出现Bug：
+1. 如果属性是 `boolean` 类型，属性名以 `isXXX` 开头，如 `isSuccess`，则 `getter` 方法并不是 `isIsSuccess`，而还是 `isSuccess`；如果是 `Boolean` 包装类，则为 `getSuccess`。
+2. 如果属性名的第二个字母大写，如 `uName`，方法是 `getuName/setuName`。
+3. 如果属性名首字母大写，如 `Name`，方法是 `getName/setName`。
 
- 1、如果属性是 `boolean` 类型，属性名以 `isXXX` 开头，如 `isSuccess`，则 `getter` 方法并不是 `isIsSuccess`，而还是 `isSuccess`；如果是 `Boolean` 包装类，则为 `getSuccess`；
-
-2、如果属性名的第二个字母大写，如 `uName`，方法是 `getuName/setuName`；
-
-3、如果属性名首字母大写，如 `Name`，方法是 `getName/setName`。
-
-## 正确使用equals方法
+## 正确使用 equals 方法
 
 `Object` 的 `equals` 方法容易抛空指针异常，应使用常量或确定有值的对象来调用 `equals` 。
 
@@ -2683,7 +2949,7 @@ public static boolean equals(Object a, Object b) {
 }
 ```
 
-## Java生成UUID
+## 生成 UUID
 
 > UUID(*Universally Unique Identifier*)全局唯一标识符，是由一组32位数的16进制数字所组成，能够保证对在同一时空中的所有机器都是唯一的。
 
@@ -2693,7 +2959,7 @@ Java 中 `java.util.UUID` 类实现了生成 UUID 的功能。
 String uuid = UUID.randomUUID().toString();
 ```
 
-## Java生成随机数
+## 生成随机数
 
 ### 方法一：调用 `Math.random()` 静态方法
 
@@ -3304,9 +3570,9 @@ System.out.printf("%.1f; %.3f; %f%n", -756.403f, 7464.232641d, dObj);
 
 ## 什么是面向对象？面向对象和面向过程的区别？
 
-面向对象(*Object Oriented*)是一种对现实世界的理解和抽象的方法。面向对象把构成问题的事务分解成各个对象，建立对象的目的不是为了完成一个步骤，而是为了描述某个事物在整个解决问题的步骤中的行为。
+面向对象(Object Oriented)是一种对现实世界的理解和抽象的方法。面向对象把构成问题的事务分解成各个对象，建立对象的目的不是为了完成一个步骤，而是为了描述某个事物在整个解决问题的步骤中的行为。
 
-面向过程(*Procedure Oriented*)是一种以过程为中心的编程思想。面向过程分析出解决问题所需要的步骤，通过自上而下的步骤实现解决问题。
+面向过程(Procedure Oriented)是一种以过程为中心的编程思想。面向过程分析出解决问题所需要的步骤，通过自上而下的步骤实现解决问题。
 
 ## **什么是编译型语言和解释型语言？**
 
@@ -3324,11 +3590,9 @@ System.out.printf("%.1f; %.3f; %f%n", -756.403f, 7464.232641d, dObj);
 
 **总结**
 
-1.一次性的编译成平台相关的机器语言文件，运行时脱离开发环境，运行效率高；
-
-2.与特定平台相关，一般无法移植到其它平台；
-
-3.现有的C、C++ 等都属于编译型语言。
+1. 一次性的编译成平台相关的机器语言文件，运行时脱离开发环境，运行效率高。
+2. 与特定平台相关，一般无法移植到其它平台。
+3. 现有的C、C++ 等都属于编译型语言。
 
 ### **解释型语言**
 
@@ -3340,11 +3604,9 @@ System.out.printf("%.1f; %.3f; %f%n", -756.403f, 7464.232641d, dObj);
 
 **总结**
 
-1.解释型语言每次运行都需要将源代码解释成机器码并执行，效率较低；
-
-2.只要平台提供相应的解释器，就可以运行源代码，所以可以方便源程序移植；
-
-3.Python、JavaScript 等属于解释型语言。
+1. 解释型语言每次运行都需要将源代码解释成机器码并执行，效率较低。
+2. 只要平台提供相应的解释器，就可以运行源代码，所以可以方便源程序移植。
+3. Python、JavaScript 等属于解释型语言。
 
 ### **编译型与解释型，两者各有利弊**
 
@@ -3354,15 +3616,15 @@ System.out.printf("%.1f; %.3f; %f%n", -756.403f, 7464.232641d, dObj);
 
 Java 和其它的语言不太一样。因为 Java 针对不同的平台有不同的 JVM，实现了跨平台。所以 Java 有一次编译到处运行的说法。
 
-1.**你可以说它是编译型的：**因为所有的 Java 代码需要编译为字节码才能被 JVM 识别。 
+**可以说它是编译型的：**因为所有的 Java 代码需要编译为字节码才能被 JVM 识别。 
 
-2.**你可以说它是解释型的：**因为 Java 字节码不能直接在平台上运行，它是解释运行在 JVM 上的。 
+**可以说它是解释型的：**因为 Java 字节码不能直接在平台上运行，它是解释运行在 JVM 上的。 
 
 > 经过解释执行，Java 代码执行速度必然会比直接执行机器码慢很多。为了提高执行速度，引入了 JIT(*just-in-time*：即时编译)技术。当 JVM 发现某个方法或代码块运行特别频繁时，就会把这些代码认定为 “Hot Spot Code”（热点代码），为了提高热点代码的执行效率，在运行时，JVM 将会把这些代码编译成与本地平台相关的机器码，并进行各层次的优化，完成这项任务由 JIT 编译器完成。
 >
-> <img src="https://note1145141919810.oss-cn-hangzhou.aliyuncs.com/JIT编译过程.png" style="zoom: 40%;" />
+> <img src="https://note1145141919810.oss-cn-hangzhou.aliyuncs.com/JIT编译过程.png" style="zoom: 33%;" />
 
-## JVM，JDK与JRE
+## JVM，JDK 与 JRE
 
 * Java 虚拟机(JVM)是运行 Java 字节码的虚拟机。JVM 有针对不同操作系统的特定实现，目的是使用相同的字节码，它们都会给出相同的结果。字节码和不同系统的 JVM 实现是 Java 语言 “一次编译，随处可以运行” 的关键所在。
 
